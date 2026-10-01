@@ -164,11 +164,15 @@ Familienmitglieder (Name, Kürzel, Farbe), Händler, Name der Apple-Erinnerungen
 
 ---
 
-## Unsere 17 Gerichte
+## Unsere 30 Gerichte
 
-Unsere 17 Familiengerichte sind in [`data/meals.seed.json`](data/meals.seed.json) hinterlegt und
-fest in die App eingebaut. Ein Tipp auf **Gerichte → „Unsere 17 Gerichte"** lädt sie – doppelt
-angelegt wird dabei nichts, erkannt wird an der festen Gerichtnummer.
+Unsere 30 Mittagsgerichte sind in [`data/meals.seed.json`](data/meals.seed.json) hinterlegt und
+fest in die App eingebaut. Ein Tipp auf **Gerichte → „Unsere 30 Gerichte"** lädt sie – doppelt
+angelegt wird dabei nichts, erkannt wird an der festen Gerichtnummer 1–30.
+
+**Zwei Gerichte brauchen keinen Einkauf:** 19 „Essen gehen" und 21 „Essen liefern lassen". Sie
+lassen sich normal in den Wochenplan legen, tragen aber nichts zur Einkaufsliste bei und sind mit
+**Kein Einkauf** gekennzeichnet.
 
 Die Mengen sind **Planungsrichtwerte für vier Personen**, sofern beim Gericht nichts anderes steht.
 Alles ist im Gericht-Editor bearbeitbar.
@@ -193,6 +197,13 @@ Gerichte können **Auswahlgruppen** haben. Nur die gewählte Option landet auf d
 - Gericht 9: *Variante* – mit **oder** ohne Hackfleisch
 - Gericht 1: *Nudelart* – normale Nudeln **oder** Dinkelnudeln (für Thore)
 - Gericht 17: *Sorten* – Margherita und/oder Spinatpizza (mehrere möglich)
+- Gericht 20: *Variante* – Grillen **oder** Burger
+- Gericht 22: *Beilage* – Quinoa **oder** Reis
+- Gerichte 23, 25, 28, 29, 30: fleischfreie bzw. fischfreie Varianten
+
+Die Varianten sind bewusst **neutral beschriftet** – jeder kann sie wählen, sie sind niemandem
+fest zugeordnet. Bei den Nudelgerichten (1, 25, 28, 30) lässt sich zwischen normalen Nudeln und
+Dinkelnudeln wählen.
 
 **Optionale Zutaten** („Optional: geriebener Käse“) zählen erst, wenn sie bei der Zuordnung
 angetippt werden. Beides stellst du im Wochenplan ein: Gerichtskarte antippen, dann Variante

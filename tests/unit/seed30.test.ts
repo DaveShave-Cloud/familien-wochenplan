@@ -1,5 +1,5 @@
 /**
- * Prueft unsere 17 echten Familiengerichte gegen den echten Importpfad.
+ * Prueft unsere 30 echten Familiengerichte gegen den echten Importpfad.
  * Diese Datei ist die Quelle der Wahrheit fuer die Gerichte-Stammdaten --
  * ein Fehler darin faellt sonst erst beim Einkaufen auf.
  */
@@ -51,15 +51,15 @@ const byNumber = (n: number): Meal => {
   return meal;
 };
 
-describe('Die 17 Gerichte', () => {
+describe('Die 30 Gerichte', () => {
   it('werden vollstaendig und fehlerfrei importiert', () => {
-    expect(meals).toHaveLength(17);
+    expect(meals).toHaveLength(30);
     expect(parsed.ok && parsed.warnings).toEqual([]);
   });
 
-  it('behalten die Nummerierung 1 bis 17', () => {
+  it('behalten die Nummerierung 1 bis 30 lueckenlos', () => {
     expect(meals.map((m) => m.number).sort((a, b) => a! - b!)).toEqual(
-      Array.from({ length: 17 }, (_, i) => i + 1),
+      Array.from({ length: 30 }, (_, i) => i + 1),
     );
   });
 
@@ -67,10 +67,17 @@ describe('Die 17 Gerichte', () => {
     expect(byNumber(1).name).toBe('Nudeln mit Tomatensauce');
     expect(byNumber(9).name).toBe('Nudeln mit Bolognese / Hackfleischgericht');
     expect(byNumber(17).name).toBe('Pizza Margherita oder Spinatpizza');
+    expect(byNumber(24).name).toBe('Bratkartoffeln mit Weckewerk, Roter Bete und Oma-Hilde-Salat');
+    expect(byNumber(30).name).toBe('Lachspasta mit Tomaten-Sahnesoße');
   });
 
   it('haben durchweg benannte Zutaten und gueltige IDs', () => {
     for (const meal of meals) {
+      // Nur "Essen gehen" und "liefern lassen" duerfen ohne Zutaten sein.
+      if (meal.noShopping) {
+        expect(meal.ingredients).toHaveLength(0);
+        continue;
+      }
       expect(meal.ingredients.length).toBeGreaterThan(0);
       for (const ingredient of meal.ingredients) {
         expect(ingredient.name.trim()).not.toBe('');
@@ -170,6 +177,105 @@ describe('Varianten und Alternativen', () => {
 
     const mit = listFor([assign(meal, '2026-09-14', { optionalIngredientIds: [kaese.id] })]);
     expect(mit.pantryChecks.concat(mit.allItems).map((i) => i.name)).toContain('Geriebener Käse');
+  });
+});
+
+describe('Gerichte ohne Einkauf (19, 21)', () => {
+  it('sind als noShopping gekennzeichnet und haben keine Zutaten', () => {
+    for (const nr of [19, 21]) {
+      expect(byNumber(nr).noShopping).toBe(true);
+      expect(byNumber(nr).ingredients).toHaveLength(0);
+    }
+  });
+
+  it('bringen nichts auf die Einkaufsliste', () => {
+    const list = listFor([assign(byNumber(19), '2026-09-14'), assign(byNumber(21), '2026-09-15')]);
+    expect(list.allItems).toHaveLength(0);
+    expect(list.pantryChecks).toHaveLength(0);
+    expect(list.groups).toHaveLength(0);
+  });
+
+  it('stoeren einen Einkauf aus anderen Gerichten nicht', () => {
+    const list = listFor([assign(byNumber(1), '2026-09-14'), assign(byNumber(19), '2026-09-15')]);
+    expect(list.allItems.map((i) => i.name)).toContain('Nudeln');
+  });
+});
+
+describe('Neue Gerichte 18 bis 30', () => {
+  it('fuehrt den Oma-Hilde-Salat in 22 und 24 mit Schmand und Kraeutern', () => {
+    for (const nr of [22, 24]) {
+      const namen = byNumber(nr).ingredients.map((i) => i.name);
+      expect(namen).toContain('Schmand');
+      expect(namen).toContain('Blattsalat');
+      expect(namen).toContain('Kräuter');
+    }
+  });
+
+  it('kauft Weckewerk als einen Posten, ohne es zu zerlegen', () => {
+    const weckewerk = byNumber(24).ingredients.find((i) => i.name === 'Weckewerk');
+    expect(weckewerk).toBeDefined();
+    expect(weckewerk!.note).toContain('fertig gekauft');
+  });
+
+  it('bietet bei den Nudelgerichten 25, 28 und 30 Dinkelnudeln an', () => {
+    for (const nr of [25, 28, 30]) {
+      const gruppe = byNumber(nr).choiceGroups?.find((g) => g.name === 'Nudelart');
+      expect(gruppe, `Gericht ${nr}`).toBeDefined();
+      expect(gruppe!.options.map((o) => o.label).join(' ')).toContain('Dinkel');
+    }
+  });
+
+  it('beschriftet fleischfreie Varianten neutral, nicht personenbezogen', () => {
+    for (const meal of meals) {
+      for (const group of meal.choiceGroups ?? []) {
+        for (const option of group.options) {
+          expect(option.label, `${meal.number}. ${meal.name}`).not.toMatch(/Sandra|Timo|Mika|Thore/);
+        }
+      }
+    }
+  });
+
+  it('laesst bei der fleischfreien Variante kein Fleisch auf die Liste', () => {
+    for (const nr of [23, 28, 29]) {
+      const meal = byNumber(nr);
+      const gruppe = meal.choiceGroups!.find((g) => g.name === 'Variante')!;
+      const ohne = gruppe.options.find((o) => o.label.toLowerCase().includes('ohne'))!;
+      const list = listFor([assign(meal, '2026-09-14', { choices: { [gruppe.id]: [ohne.id] } })]);
+      const namen = list.allItems.map((i) => i.name).join(' | ');
+      expect(namen, `Gericht ${nr}`).not.toMatch(/Hähnchenbrustfilet|Rinderhack/);
+    }
+  });
+
+  it('setzt bei 22 nur die gewaehlte Beilage auf die Liste', () => {
+    const meal = byNumber(22);
+    const gruppe = meal.choiceGroups!.find((g) => g.name === 'Beilage')!;
+    const quinoa = gruppe.options.find((o) => o.label === 'Quinoa')!;
+
+    const mitReis = listFor([assign(meal)]);
+    expect(mitReis.allItems.map((i) => i.name)).toContain('Reis');
+    expect(mitReis.allItems.map((i) => i.name)).not.toContain('Quinoa');
+
+    const mitQuinoa = listFor([assign(meal, '2026-09-14', { choices: { [gruppe.id]: [quinoa.id] } })]);
+    expect(mitQuinoa.allItems.map((i) => i.name)).toContain('Quinoa');
+    expect(mitQuinoa.allItems.map((i) => i.name)).not.toContain('Reis');
+  });
+
+  it('haelt Apfelmus und Marmelade bei 26 optional', () => {
+    const meal = byNumber(26);
+    for (const name of ['Apfelmus', 'Marmelade', 'Zucker']) {
+      expect(meal.ingredients.find((i) => i.name === name)?.optional, name).toBe(true);
+    }
+    const list = listFor([assign(meal)]);
+    expect(list.allItems.map((i) => i.name)).not.toContain('Apfelmus');
+    expect(list.allItems.map((i) => i.name)).toContain('Mehl');
+  });
+
+  it('fuehrt Zutaten ueber alte und neue Gerichte zusammen', () => {
+    // Gericht 1 (500 g Nudeln) und 30 (500 g Nudeln) -> 1 kg.
+    const list = listFor([assign(byNumber(1), '2026-09-14'), assign(byNumber(30), '2026-09-16')]);
+    const nudeln = list.allItems.find((i) => i.name === 'Nudeln');
+    expect(nudeln?.amountUpper).toBe(1);
+    expect(nudeln?.unit).toBe('kg');
   });
 });
 

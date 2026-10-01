@@ -11,9 +11,10 @@ test.beforeEach(async ({ page }) => {
   await openFreshApp(page);
 });
 
-test('lädt alle 17 Gerichte mit ihrer Nummerierung', async ({ page }) => {
+test('lädt alle 30 Gerichte mit ihrer Nummerierung', async ({ page }) => {
   await loadSeed(page);
-  await expect(page.getByRole('heading', { name: /^\d+\. / })).toHaveCount(17);
+  await expect(page.getByRole('heading', { name: /^\d+\. / })).toHaveCount(30);
+  await expect(page.getByRole('heading', { name: '30. Lachspasta mit Tomaten-Sahnesoße' })).toBeVisible();
   await expect(page.getByRole('heading', { name: '17. Pizza Margherita oder Spinatpizza' })).toBeVisible();
   await expect(page.getByRole('heading', { name: '9. Nudeln mit Bolognese / Hackfleischgericht' })).toBeVisible();
 });
@@ -21,8 +22,8 @@ test('lädt alle 17 Gerichte mit ihrer Nummerierung', async ({ page }) => {
 test('legt beim zweiten Laden keine Duplikate an', async ({ page }) => {
   await loadSeed(page);
   await page.getByTestId('load-seed').click();
-  await expect(page.getByText('Alle 17 Gerichte sind bereits vorhanden.')).toBeVisible();
-  await expect(page.getByRole('heading', { name: /^\d+\. / })).toHaveCount(17);
+  await expect(page.getByText('Alle 30 Gerichte sind bereits vorhanden.')).toBeVisible();
+  await expect(page.getByRole('heading', { name: /^\d+\. / })).toHaveCount(30);
 });
 
 test('setzt bei „Reis oder Kartoffeln" nur die gewählte Beilage auf die Liste', async ({ page }) => {
@@ -122,4 +123,17 @@ test('Beispiel aus der Vorgabe: Sandras Salat bringt kein Hackfleisch mit', asyn
   await expect(liste).toContainText('Käse');
   // Fisch ist bei Gericht 7 nicht vorgewaehlt.
   await expect(page.getByRole('region', { name: 'Unklar' })).not.toContainText('Fisch');
+});
+
+test('Gericht ohne Einkauf erscheint im Plan, aber nicht auf der Liste', async ({ page }) => {
+  await loadSeed(page);
+  await goToView(page, 'Wochenplan');
+  const pool = page.getByRole('region', { name: 'Unsere Gerichte' });
+
+  await pool.getByRole('button', { name: /19\. Essen gehen/ }).first().click();
+  await day(page, 0).getByRole('button', { name: 'Hier einsetzen' }).click();
+  await expect(day(page, 0).getByText('19. Essen gehen')).toBeVisible();
+
+  await goToView(page, 'Einkaufsliste');
+  await expect(page.getByText(/noch keine Gerichte eingeplant|nichts einzukaufen/)).toBeVisible();
 });

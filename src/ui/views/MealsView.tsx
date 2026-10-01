@@ -11,7 +11,7 @@ import { newIngredientId, newMealId, nowISO } from '../../domain/ids';
 import { parseMealImport, serializeMeals } from '../../domain/mealSchema';
 import type { ValidationIssue } from '../../domain/mealSchema';
 import { addMeals, addMealsWithoutDuplicates, deleteMeal, saveMeal } from '../../data/repositories';
-// Unsere 17 Familiengerichte. Fest mitgebaut (rund 29 kB), damit sie auch
+// Unsere 30 Familiengerichte. Fest mitgebaut (rund 29 kB), damit sie auch
 // offline und ohne Dateiauswahl auf dem iPad verfuegbar sind.
 import seedMeals from '../../../data/meals.seed.json';
 import { downloadBlob } from '../../services/share';
@@ -423,7 +423,8 @@ function MealEditor({ meal, merchants, onClose }: { meal: Meal; merchants: Merch
           <ul className="mt-3 space-y-2">
             {draft.ingredients.length === 0 && (
               <li className="rounded-xl bg-[color:var(--color-parchment)] p-4 text-sm text-[color:var(--color-muted)]">
-                Noch keine Zutaten. Ohne Zutaten erscheint dieses Gericht nicht auf der Einkaufsliste.
+                Noch keine Zutaten. Ohne Zutaten erscheint dieses Gericht nicht auf der Einkaufsliste –
+                bei „Essen gehen“ und „Essen liefern lassen“ ist genau das gewollt.
               </li>
             )}
             {draft.ingredients.map((ingredient, index) => (
@@ -509,7 +510,7 @@ export function MealsView() {
     notify(`${result.value.length} Gericht(e) importiert.`, 'success');
   };
 
-  /** Laedt unsere 17 Familiengerichte, ohne vorhandene doppelt anzulegen. */
+  /** Laedt unsere 30 Familiengerichte, ohne vorhandene doppelt anzulegen. */
   const handleLoadSeed = async () => {
     setIssues(null);
     const result = parseMealImport(seedMeals, (name) => merchantByName.get(name.toLowerCase().trim()) ?? null);
@@ -520,7 +521,7 @@ export function MealsView() {
     }
     const { added, skipped } = await addMealsWithoutDuplicates(result.value);
     if (added.length === 0) {
-      notify('Alle 17 Gerichte sind bereits vorhanden.', 'info');
+      notify('Alle 30 Gerichte sind bereits vorhanden.', 'info');
     } else {
       notify(
         `${added.length} Gericht(e) geladen${skipped.length > 0 ? `, ${skipped.length} waren schon da` : ''}.`,
@@ -588,7 +589,7 @@ export function MealsView() {
             data-testid="load-seed"
             className="tap rounded-xl border border-[color:var(--color-line)] bg-white px-4 font-semibold"
           >
-            Unsere 17 Gerichte
+            Unsere 30 Gerichte
           </button>
           <button type="button" onClick={() => setEditing(emptyMeal())} className="tap rounded-xl bg-[color:var(--color-terracotta)] px-5 font-semibold text-white">
             + Neues Gericht
@@ -644,7 +645,7 @@ export function MealsView() {
             <p className="mt-2 text-[color:var(--color-muted)]">
               Lege ein Gericht von Hand an oder importiere eure Rezepte als JSON-Datei. Das erwartete Format
               steht in <code>data/meal.schema.json</code>, eine Beispieldatei liegt unter{' '}
-              <code>data/meals.example.json</code>. Unsere 17 echten Gerichte gehören in{' '}
+              <code>data/meals.example.json</code>. Unsere 30 Gerichte stehen in{' '}
               <code>data/meals.seed.json</code>.
             </p>
             <div className="mt-4 flex flex-wrap gap-2">
@@ -653,7 +654,7 @@ export function MealsView() {
                 onClick={() => void handleLoadSeed()}
                 className="tap rounded-xl bg-[color:var(--color-terracotta)] px-5 font-semibold text-white"
               >
-                Unsere 17 Gerichte laden
+                Unsere 30 Gerichte laden
               </button>
               <button
                 type="button"
@@ -686,6 +687,11 @@ export function MealsView() {
                   {meal.demo && (
                     <span className="mt-1 inline-block rounded-full bg-[color:var(--color-parchment)] px-2 py-0.5 text-xs font-bold">
                       DEMO
+                    </span>
+                  )}
+                  {meal.noShopping && (
+                    <span className="mt-1 inline-block rounded-full bg-[color:var(--color-sage)] px-2 py-0.5 text-xs font-bold text-white">
+                      Kein Einkauf
                     </span>
                   )}
                   <p className="text-sm text-[color:var(--color-muted)]">

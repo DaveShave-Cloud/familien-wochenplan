@@ -2,11 +2,12 @@
   "format": "familien-wochenplan/meals",
   "version": 1,
   "_hinweis": [
-    "Unsere 17 Familiengerichte. Mengen sind Planungsrichtwerte fuer vier Personen,",
+    "Unsere 30 Mittagsgerichte. Mengen sind Planungsrichtwerte fuer vier Personen,",
     "sofern beim Gericht nichts anderes steht (siehe servings).",
     "servings: null bedeutet: Portionsbasis bewusst nicht beziffert.",
     "amount: null bedeutet \"Menge offen\" - bewusst keine erfundene Zahl.",
-    "pantryStaple: Oel, Gewuerze und Aehnliches - wird nie aufsummiert."
+    "pantryStaple: Oel, Gewuerze und Aehnliches - wird nie aufsummiert.",
+    "noShopping: Gericht ohne Einkauf (auswaerts essen, liefern lassen)."
   ],
   "meals": [
     {
@@ -30,7 +31,7 @@
             },
             {
               "key": "dinkel",
-              "label": "Dinkelnudeln (Thore)"
+              "label": "Dinkelnudeln"
             }
           ]
         }
@@ -664,7 +665,7 @@
       "name": "Hähnchen mit Kartoffeln oder Reis und Gemüse",
       "servings": 4,
       "cookingTime": "ca. 35–45 Minuten",
-      "description": "Eiweißkomponente pro Person austauschbar; Beilagen gemeinsam planbar.",
+      "description": "Eiweißkomponente pro Person austauschbar; Beilagen gemeinsam planbar. Die fleischfreien Optionen kann jeder wählen.",
       "choiceGroups": [
         {
           "key": "beilage",
@@ -698,11 +699,11 @@
             },
             {
               "key": "ei",
-              "label": "Ei (für Sandra)"
+              "label": "Ei"
             },
             {
               "key": "kaese",
-              "label": "Käse (für Sandra)"
+              "label": "Käse"
             }
           ]
         }
@@ -1236,6 +1237,1165 @@
           "unit": "Stk",
           "optional": true,
           "note": "als Beilage"
+        }
+      ]
+    },
+    {
+      "number": 18,
+      "name": "Pizza Hawaii",
+      "servings": 4,
+      "cookingTime": "ca. 30–40 Minuten",
+      "choiceGroups": [
+        {
+          "key": "teig",
+          "name": "Teig",
+          "mode": "one",
+          "default": [
+            "selbst"
+          ],
+          "options": [
+            {
+              "key": "selbst",
+              "label": "Selbst gemacht"
+            },
+            {
+              "key": "fertig",
+              "label": "Fertigteig"
+            }
+          ]
+        }
+      ],
+      "ingredients": [
+        {
+          "name": "Mehl",
+          "amount": 500,
+          "unit": "g",
+          "choiceGroup": "teig",
+          "choiceOption": "selbst"
+        },
+        {
+          "name": "Hefe",
+          "amount": 1,
+          "unit": "Pck",
+          "choiceGroup": "teig",
+          "choiceOption": "selbst"
+        },
+        {
+          "name": "Wasser",
+          "amount": null,
+          "unit": "nach Bedarf",
+          "choiceGroup": "teig",
+          "choiceOption": "selbst",
+          "pantryStaple": true
+        },
+        {
+          "name": "Pizzateig (fertig)",
+          "amount": {
+            "min": 1,
+            "max": 2
+          },
+          "unit": "Pck",
+          "choiceGroup": "teig",
+          "choiceOption": "fertig"
+        },
+        {
+          "name": "Tomatensauce",
+          "amount": {
+            "min": 400,
+            "max": 500
+          },
+          "unit": "ml"
+        },
+        {
+          "name": "Gekochter Schinken",
+          "amount": 200,
+          "unit": "g"
+        },
+        {
+          "name": "Ananas",
+          "amount": 1,
+          "unit": "Dose"
+        },
+        {
+          "name": "Geriebener Käse",
+          "amount": {
+            "min": 300,
+            "max": 400
+          },
+          "unit": "g"
+        },
+        {
+          "name": "Öl",
+          "amount": null,
+          "unit": "nach Bedarf",
+          "pantryStaple": true
+        },
+        {
+          "name": "Gewürze",
+          "amount": null,
+          "unit": "nach Bedarf",
+          "pantryStaple": true
+        }
+      ]
+    },
+    {
+      "number": 19,
+      "name": "Essen gehen",
+      "servings": 4,
+      "cookingTime": "entfällt",
+      "noShopping": true,
+      "description": "Auswärts essen – es muss nichts eingekauft werden.",
+      "ingredients": []
+    },
+    {
+      "number": 20,
+      "name": "Grillen / Burger",
+      "servings": 4,
+      "cookingTime": "ca. 40–60 Minuten",
+      "choiceGroups": [
+        {
+          "key": "variante",
+          "name": "Variante",
+          "mode": "one",
+          "default": [
+            "grillen"
+          ],
+          "options": [
+            {
+              "key": "grillen",
+              "label": "Grillen"
+            },
+            {
+              "key": "burger",
+              "label": "Burger"
+            }
+          ]
+        }
+      ],
+      "ingredients": [
+        {
+          "name": "Grillfleisch",
+          "amount": {
+            "min": 800,
+            "max": 1000
+          },
+          "unit": "g",
+          "choiceGroup": "variante",
+          "choiceOption": "grillen"
+        },
+        {
+          "name": "Grillwürstchen",
+          "amount": {
+            "min": 4,
+            "max": 8
+          },
+          "unit": "Stk",
+          "choiceGroup": "variante",
+          "choiceOption": "grillen",
+          "optional": true
+        },
+        {
+          "name": "Baguette",
+          "amount": {
+            "min": 1,
+            "max": 2
+          },
+          "unit": "Stk",
+          "choiceGroup": "variante",
+          "choiceOption": "grillen"
+        },
+        {
+          "name": "Burgerbrötchen",
+          "amount": 8,
+          "unit": "Stk",
+          "choiceGroup": "variante",
+          "choiceOption": "burger"
+        },
+        {
+          "name": "Rinderhack",
+          "amount": {
+            "min": 600,
+            "max": 800
+          },
+          "unit": "g",
+          "choiceGroup": "variante",
+          "choiceOption": "burger"
+        },
+        {
+          "name": "Käsescheiben",
+          "amount": 8,
+          "unit": "Scheibe",
+          "choiceGroup": "variante",
+          "choiceOption": "burger"
+        },
+        {
+          "name": "Grillkäse",
+          "amount": {
+            "min": 200,
+            "max": 300
+          },
+          "unit": "g",
+          "optional": true,
+          "note": "fleischfreie Beigabe"
+        },
+        {
+          "name": "Gemüse zum Grillen",
+          "amount": {
+            "min": 400,
+            "max": 600
+          },
+          "unit": "g",
+          "optional": true,
+          "note": "fleischfreie Beigabe"
+        },
+        {
+          "name": "Blattsalat",
+          "amount": {
+            "min": 1,
+            "max": 2
+          },
+          "unit": "Stk"
+        },
+        {
+          "name": "Tomaten",
+          "amount": 300,
+          "unit": "g"
+        },
+        {
+          "name": "Zwiebeln",
+          "amount": 2,
+          "unit": "Stk"
+        },
+        {
+          "name": "Grillsaucen",
+          "amount": null,
+          "unit": "nach Bedarf",
+          "pantryStaple": true
+        },
+        {
+          "name": "Öl",
+          "amount": null,
+          "unit": "nach Bedarf",
+          "pantryStaple": true
+        },
+        {
+          "name": "Gewürze",
+          "amount": null,
+          "unit": "nach Bedarf",
+          "pantryStaple": true
+        }
+      ]
+    },
+    {
+      "number": 21,
+      "name": "Essen liefern lassen",
+      "servings": 4,
+      "cookingTime": "entfällt",
+      "noShopping": true,
+      "description": "Essen wird geliefert – es muss nichts eingekauft werden.",
+      "ingredients": []
+    },
+    {
+      "number": 22,
+      "name": "Curry-Hähnchen mit Quinoa oder Reis und Oma-Hilde-Salat",
+      "servings": 4,
+      "cookingTime": "ca. 35–45 Minuten",
+      "choiceGroups": [
+        {
+          "key": "beilage",
+          "name": "Beilage",
+          "mode": "one",
+          "default": [
+            "reis"
+          ],
+          "options": [
+            {
+              "key": "quinoa",
+              "label": "Quinoa"
+            },
+            {
+              "key": "reis",
+              "label": "Reis"
+            }
+          ]
+        },
+        {
+          "key": "variante",
+          "name": "Variante",
+          "mode": "one",
+          "default": [
+            "fleisch"
+          ],
+          "options": [
+            {
+              "key": "fleisch",
+              "label": "Mit Hähnchen"
+            },
+            {
+              "key": "ohne",
+              "label": "Ohne Hähnchen"
+            }
+          ]
+        }
+      ],
+      "ingredients": [
+        {
+          "name": "Hähnchenbrustfilet",
+          "amount": {
+            "min": 500,
+            "max": 700
+          },
+          "unit": "g",
+          "choiceGroup": "variante",
+          "choiceOption": "fleisch"
+        },
+        {
+          "name": "Kichererbsen",
+          "amount": {
+            "min": 1,
+            "max": 2
+          },
+          "unit": "Dose",
+          "choiceGroup": "variante",
+          "choiceOption": "ohne"
+        },
+        {
+          "name": "Quinoa",
+          "amount": {
+            "min": 300,
+            "max": 400
+          },
+          "unit": "g",
+          "choiceGroup": "beilage",
+          "choiceOption": "quinoa"
+        },
+        {
+          "name": "Reis",
+          "amount": {
+            "min": 400,
+            "max": 500
+          },
+          "unit": "g",
+          "choiceGroup": "beilage",
+          "choiceOption": "reis"
+        },
+        {
+          "name": "Kokosmilch",
+          "amount": 400,
+          "unit": "ml"
+        },
+        {
+          "name": "Paprika",
+          "amount": {
+            "min": 2,
+            "max": 3
+          },
+          "unit": "Stk"
+        },
+        {
+          "name": "Zwiebeln",
+          "amount": 2,
+          "unit": "Stk"
+        },
+        {
+          "name": "Currypulver",
+          "amount": null,
+          "unit": "nach Bedarf",
+          "pantryStaple": true
+        },
+        {
+          "name": "Öl",
+          "amount": null,
+          "unit": "nach Bedarf",
+          "pantryStaple": true
+        },
+        {
+          "name": "Blattsalat",
+          "amount": {
+            "min": 1,
+            "max": 2
+          },
+          "unit": "Stk",
+          "note": "für den Oma-Hilde-Salat"
+        },
+        {
+          "name": "Schmand",
+          "amount": 200,
+          "unit": "g",
+          "note": "für den Oma-Hilde-Salat"
+        },
+        {
+          "name": "Kräuter",
+          "amount": null,
+          "unit": "nach Bedarf",
+          "pantryStaple": true,
+          "note": "für den Oma-Hilde-Salat"
+        }
+      ]
+    },
+    {
+      "number": 23,
+      "name": "Hühnerfrikassee",
+      "servings": 4,
+      "cookingTime": "ca. 45–60 Minuten",
+      "choiceGroups": [
+        {
+          "key": "variante",
+          "name": "Variante",
+          "mode": "one",
+          "default": [
+            "fleisch"
+          ],
+          "options": [
+            {
+              "key": "fleisch",
+              "label": "Mit Hähnchen"
+            },
+            {
+              "key": "ohne",
+              "label": "Ohne Fleisch"
+            }
+          ]
+        }
+      ],
+      "ingredients": [
+        {
+          "name": "Hähnchenbrustfilet",
+          "amount": {
+            "min": 600,
+            "max": 800
+          },
+          "unit": "g",
+          "choiceGroup": "variante",
+          "choiceOption": "fleisch"
+        },
+        {
+          "name": "Champignons",
+          "amount": {
+            "min": 400,
+            "max": 500
+          },
+          "unit": "g",
+          "choiceGroup": "variante",
+          "choiceOption": "ohne",
+          "note": "ersetzt in der fleischfreien Variante das Huhn"
+        },
+        {
+          "name": "Champignons",
+          "amount": 250,
+          "unit": "g",
+          "choiceGroup": "variante",
+          "choiceOption": "fleisch"
+        },
+        {
+          "name": "Reis",
+          "amount": {
+            "min": 400,
+            "max": 500
+          },
+          "unit": "g"
+        },
+        {
+          "name": "Spargel",
+          "amount": 1,
+          "unit": "Glas"
+        },
+        {
+          "name": "Erbsen",
+          "amount": {
+            "min": 200,
+            "max": 300
+          },
+          "unit": "g"
+        },
+        {
+          "name": "Sahne",
+          "amount": 200,
+          "unit": "ml"
+        },
+        {
+          "name": "Zitrone",
+          "amount": 1,
+          "unit": "Stk",
+          "optional": true
+        },
+        {
+          "name": "Mehl",
+          "amount": null,
+          "unit": "nach Bedarf",
+          "pantryStaple": true
+        },
+        {
+          "name": "Butter",
+          "amount": null,
+          "unit": "nach Bedarf",
+          "pantryStaple": true
+        },
+        {
+          "name": "Brühe",
+          "amount": null,
+          "unit": "nach Bedarf",
+          "pantryStaple": true
+        }
+      ]
+    },
+    {
+      "number": 24,
+      "name": "Bratkartoffeln mit Weckewerk, Roter Bete und Oma-Hilde-Salat",
+      "servings": 4,
+      "cookingTime": "ca. 35–45 Minuten",
+      "description": "Weckewerk ist eine hessische Spezialität und wird fertig gekauft.",
+      "ingredients": [
+        {
+          "name": "Kartoffeln",
+          "amount": {
+            "min": 1200,
+            "max": 1500
+          },
+          "unit": "g"
+        },
+        {
+          "name": "Weckewerk",
+          "amount": {
+            "min": 500,
+            "max": 700
+          },
+          "unit": "g",
+          "note": "hessische Spezialität, wird fertig gekauft"
+        },
+        {
+          "name": "Rote Bete",
+          "amount": 1,
+          "unit": "Glas"
+        },
+        {
+          "name": "Zwiebeln",
+          "amount": 2,
+          "unit": "Stk"
+        },
+        {
+          "name": "Öl oder Butterschmalz",
+          "amount": null,
+          "unit": "nach Bedarf",
+          "pantryStaple": true
+        },
+        {
+          "name": "Gewürze",
+          "amount": null,
+          "unit": "nach Bedarf",
+          "pantryStaple": true
+        },
+        {
+          "name": "Blattsalat",
+          "amount": {
+            "min": 1,
+            "max": 2
+          },
+          "unit": "Stk",
+          "note": "für den Oma-Hilde-Salat"
+        },
+        {
+          "name": "Schmand",
+          "amount": 200,
+          "unit": "g",
+          "note": "für den Oma-Hilde-Salat"
+        },
+        {
+          "name": "Kräuter",
+          "amount": null,
+          "unit": "nach Bedarf",
+          "pantryStaple": true,
+          "note": "für den Oma-Hilde-Salat"
+        }
+      ]
+    },
+    {
+      "number": 25,
+      "name": "Lasagne à la Garfield",
+      "servings": 4,
+      "cookingTime": "ca. 60–75 Minuten",
+      "description": "Klassische Lasagne Bolognese – der Name ist ein Gag.",
+      "choiceGroups": [
+        {
+          "key": "nudelart",
+          "name": "Nudelart",
+          "mode": "one",
+          "default": [
+            "normal"
+          ],
+          "options": [
+            {
+              "key": "normal",
+              "label": "Normale Nudeln"
+            },
+            {
+              "key": "dinkel",
+              "label": "Dinkelnudeln"
+            }
+          ]
+        },
+        {
+          "key": "variante",
+          "name": "Variante",
+          "mode": "one",
+          "default": [
+            "fleisch"
+          ],
+          "options": [
+            {
+              "key": "fleisch",
+              "label": "Mit Hackfleisch"
+            },
+            {
+              "key": "ohne",
+              "label": "Ohne Hackfleisch"
+            }
+          ]
+        }
+      ],
+      "ingredients": [
+        {
+          "name": "Lasagneplatten",
+          "amount": 500,
+          "unit": "g",
+          "choiceGroup": "nudelart",
+          "choiceOption": "normal"
+        },
+        {
+          "name": "Dinkel-Lasagneplatten",
+          "amount": 500,
+          "unit": "g",
+          "choiceGroup": "nudelart",
+          "choiceOption": "dinkel"
+        },
+        {
+          "name": "Rinderhack",
+          "amount": {
+            "min": 500,
+            "max": 600
+          },
+          "unit": "g",
+          "choiceGroup": "variante",
+          "choiceOption": "fleisch"
+        },
+        {
+          "name": "Linsen",
+          "amount": 250,
+          "unit": "g",
+          "choiceGroup": "variante",
+          "choiceOption": "ohne",
+          "note": "ersetzt in der fleischfreien Variante das Hack"
+        },
+        {
+          "name": "Passierte Tomaten",
+          "amount": {
+            "min": 700,
+            "max": 800
+          },
+          "unit": "ml"
+        },
+        {
+          "name": "Zwiebeln",
+          "amount": 2,
+          "unit": "Stk"
+        },
+        {
+          "name": "Möhren",
+          "amount": 2,
+          "unit": "Stk"
+        },
+        {
+          "name": "Milch",
+          "amount": 500,
+          "unit": "ml",
+          "note": "für die Béchamelsauce"
+        },
+        {
+          "name": "Geriebener Käse",
+          "amount": {
+            "min": 200,
+            "max": 300
+          },
+          "unit": "g"
+        },
+        {
+          "name": "Butter",
+          "amount": null,
+          "unit": "nach Bedarf",
+          "pantryStaple": true
+        },
+        {
+          "name": "Mehl",
+          "amount": null,
+          "unit": "nach Bedarf",
+          "pantryStaple": true
+        },
+        {
+          "name": "Öl",
+          "amount": null,
+          "unit": "nach Bedarf",
+          "pantryStaple": true
+        },
+        {
+          "name": "Kräuter",
+          "amount": null,
+          "unit": "nach Bedarf",
+          "pantryStaple": true
+        }
+      ]
+    },
+    {
+      "number": 26,
+      "name": "Pfannkuchen",
+      "servings": 4,
+      "cookingTime": "ca. 30–40 Minuten",
+      "ingredients": [
+        {
+          "name": "Mehl",
+          "amount": 500,
+          "unit": "g"
+        },
+        {
+          "name": "Eier",
+          "amount": 6,
+          "unit": "Stk"
+        },
+        {
+          "name": "Milch",
+          "amount": 750,
+          "unit": "ml"
+        },
+        {
+          "name": "Salz",
+          "amount": null,
+          "unit": "nach Bedarf",
+          "pantryStaple": true
+        },
+        {
+          "name": "Butter oder Öl",
+          "amount": null,
+          "unit": "nach Bedarf",
+          "pantryStaple": true
+        },
+        {
+          "name": "Apfelmus",
+          "amount": 1,
+          "unit": "Glas",
+          "optional": true
+        },
+        {
+          "name": "Marmelade",
+          "amount": 1,
+          "unit": "Glas",
+          "optional": true
+        },
+        {
+          "name": "Zucker",
+          "amount": null,
+          "unit": "nach Bedarf",
+          "optional": true
+        }
+      ]
+    },
+    {
+      "number": 27,
+      "name": "Senfeier mit Kartoffeln und Salat",
+      "servings": 4,
+      "cookingTime": "ca. 30–40 Minuten",
+      "ingredients": [
+        {
+          "name": "Eier",
+          "amount": {
+            "min": 8,
+            "max": 10
+          },
+          "unit": "Stk"
+        },
+        {
+          "name": "Kartoffeln",
+          "amount": 1200,
+          "unit": "g"
+        },
+        {
+          "name": "Milch",
+          "amount": 500,
+          "unit": "ml"
+        },
+        {
+          "name": "Senf",
+          "amount": null,
+          "unit": "nach Bedarf",
+          "pantryStaple": true
+        },
+        {
+          "name": "Mehl",
+          "amount": null,
+          "unit": "nach Bedarf",
+          "pantryStaple": true
+        },
+        {
+          "name": "Butter",
+          "amount": null,
+          "unit": "nach Bedarf",
+          "pantryStaple": true
+        },
+        {
+          "name": "Blattsalat",
+          "amount": {
+            "min": 1,
+            "max": 2
+          },
+          "unit": "Stk"
+        },
+        {
+          "name": "Dressing-Zutaten",
+          "amount": null,
+          "unit": "nach Bedarf",
+          "pantryStaple": true
+        }
+      ]
+    },
+    {
+      "number": 28,
+      "name": "Thai-Curry mit Huhn, Nudeln und Salat",
+      "servings": 4,
+      "cookingTime": "ca. 35–45 Minuten",
+      "choiceGroups": [
+        {
+          "key": "nudelart",
+          "name": "Nudelart",
+          "mode": "one",
+          "default": [
+            "normal"
+          ],
+          "options": [
+            {
+              "key": "normal",
+              "label": "Normale Nudeln"
+            },
+            {
+              "key": "dinkel",
+              "label": "Dinkelnudeln"
+            }
+          ]
+        },
+        {
+          "key": "variante",
+          "name": "Variante",
+          "mode": "one",
+          "default": [
+            "fleisch"
+          ],
+          "options": [
+            {
+              "key": "fleisch",
+              "label": "Mit Huhn"
+            },
+            {
+              "key": "ohne",
+              "label": "Ohne Fleisch"
+            }
+          ]
+        }
+      ],
+      "ingredients": [
+        {
+          "name": "Nudeln",
+          "amount": {
+            "min": 400,
+            "max": 500
+          },
+          "unit": "g",
+          "choiceGroup": "nudelart",
+          "choiceOption": "normal"
+        },
+        {
+          "name": "Dinkelnudeln",
+          "amount": {
+            "min": 400,
+            "max": 500
+          },
+          "unit": "g",
+          "choiceGroup": "nudelart",
+          "choiceOption": "dinkel"
+        },
+        {
+          "name": "Hähnchenbrustfilet",
+          "amount": {
+            "min": 500,
+            "max": 700
+          },
+          "unit": "g",
+          "choiceGroup": "variante",
+          "choiceOption": "fleisch"
+        },
+        {
+          "name": "Tofu",
+          "amount": 400,
+          "unit": "g",
+          "choiceGroup": "variante",
+          "choiceOption": "ohne",
+          "note": "ersetzt in der fleischfreien Variante das Huhn"
+        },
+        {
+          "name": "Kokosmilch",
+          "amount": 400,
+          "unit": "ml"
+        },
+        {
+          "name": "Thai-Currypaste",
+          "amount": 1,
+          "unit": "Glas"
+        },
+        {
+          "name": "Paprika",
+          "amount": {
+            "min": 2,
+            "max": 3
+          },
+          "unit": "Stk"
+        },
+        {
+          "name": "Möhren",
+          "amount": {
+            "min": 2,
+            "max": 3
+          },
+          "unit": "Stk"
+        },
+        {
+          "name": "Zuckerschoten",
+          "amount": 200,
+          "unit": "g"
+        },
+        {
+          "name": "Blattsalat",
+          "amount": {
+            "min": 1,
+            "max": 2
+          },
+          "unit": "Stk"
+        },
+        {
+          "name": "Öl",
+          "amount": null,
+          "unit": "nach Bedarf",
+          "pantryStaple": true
+        },
+        {
+          "name": "Sojasauce",
+          "amount": null,
+          "unit": "nach Bedarf",
+          "pantryStaple": true
+        }
+      ]
+    },
+    {
+      "number": 29,
+      "name": "Süßkartoffel-Hackfleisch-Auflauf",
+      "servings": 4,
+      "cookingTime": "ca. 50–60 Minuten",
+      "choiceGroups": [
+        {
+          "key": "variante",
+          "name": "Variante",
+          "mode": "one",
+          "default": [
+            "fleisch"
+          ],
+          "options": [
+            {
+              "key": "fleisch",
+              "label": "Mit Hackfleisch"
+            },
+            {
+              "key": "ohne",
+              "label": "Ohne Hackfleisch"
+            }
+          ]
+        }
+      ],
+      "ingredients": [
+        {
+          "name": "Süßkartoffeln",
+          "amount": {
+            "min": 1200,
+            "max": 1500
+          },
+          "unit": "g"
+        },
+        {
+          "name": "Rinderhack",
+          "amount": {
+            "min": 500,
+            "max": 600
+          },
+          "unit": "g",
+          "choiceGroup": "variante",
+          "choiceOption": "fleisch"
+        },
+        {
+          "name": "Kidneybohnen",
+          "amount": {
+            "min": 1,
+            "max": 2
+          },
+          "unit": "Dose",
+          "choiceGroup": "variante",
+          "choiceOption": "ohne",
+          "note": "ersetzt in der fleischfreien Variante das Hack"
+        },
+        {
+          "name": "Passierte Tomaten",
+          "amount": {
+            "min": 400,
+            "max": 500
+          },
+          "unit": "ml"
+        },
+        {
+          "name": "Zwiebeln",
+          "amount": 2,
+          "unit": "Stk"
+        },
+        {
+          "name": "Geriebener Käse",
+          "amount": {
+            "min": 200,
+            "max": 300
+          },
+          "unit": "g"
+        },
+        {
+          "name": "Sahne",
+          "amount": 200,
+          "unit": "ml"
+        },
+        {
+          "name": "Öl",
+          "amount": null,
+          "unit": "nach Bedarf",
+          "pantryStaple": true
+        },
+        {
+          "name": "Gewürze",
+          "amount": null,
+          "unit": "nach Bedarf",
+          "pantryStaple": true
+        }
+      ]
+    },
+    {
+      "number": 30,
+      "name": "Lachspasta mit Tomaten-Sahnesoße",
+      "servings": 4,
+      "cookingTime": "ca. 25–35 Minuten",
+      "choiceGroups": [
+        {
+          "key": "nudelart",
+          "name": "Nudelart",
+          "mode": "one",
+          "default": [
+            "normal"
+          ],
+          "options": [
+            {
+              "key": "normal",
+              "label": "Normale Nudeln"
+            },
+            {
+              "key": "dinkel",
+              "label": "Dinkelnudeln"
+            }
+          ]
+        },
+        {
+          "key": "variante",
+          "name": "Variante",
+          "mode": "one",
+          "default": [
+            "lachs"
+          ],
+          "options": [
+            {
+              "key": "lachs",
+              "label": "Mit Lachs"
+            },
+            {
+              "key": "ohne",
+              "label": "Ohne Lachs"
+            }
+          ]
+        }
+      ],
+      "ingredients": [
+        {
+          "name": "Nudeln",
+          "amount": 500,
+          "unit": "g",
+          "choiceGroup": "nudelart",
+          "choiceOption": "normal"
+        },
+        {
+          "name": "Dinkelnudeln",
+          "amount": 500,
+          "unit": "g",
+          "choiceGroup": "nudelart",
+          "choiceOption": "dinkel"
+        },
+        {
+          "name": "Lachsfilet",
+          "amount": {
+            "min": 500,
+            "max": 600
+          },
+          "unit": "g",
+          "choiceGroup": "variante",
+          "choiceOption": "lachs"
+        },
+        {
+          "name": "Champignons",
+          "amount": 300,
+          "unit": "g",
+          "choiceGroup": "variante",
+          "choiceOption": "ohne",
+          "note": "ersetzt in der Variante ohne Lachs den Fisch"
+        },
+        {
+          "name": "Sahne",
+          "amount": 400,
+          "unit": "ml"
+        },
+        {
+          "name": "Passierte Tomaten",
+          "amount": {
+            "min": 400,
+            "max": 500
+          },
+          "unit": "ml"
+        },
+        {
+          "name": "Zwiebeln",
+          "amount": 1,
+          "unit": "Stk"
+        },
+        {
+          "name": "Zitrone",
+          "amount": 1,
+          "unit": "Stk",
+          "optional": true
+        },
+        {
+          "name": "Öl",
+          "amount": null,
+          "unit": "nach Bedarf",
+          "pantryStaple": true
+        },
+        {
+          "name": "Kräuter",
+          "amount": null,
+          "unit": "nach Bedarf",
+          "pantryStaple": true
         }
       ]
     }

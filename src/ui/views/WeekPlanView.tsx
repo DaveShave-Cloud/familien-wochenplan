@@ -84,7 +84,9 @@ function PoolCard({ meal, armed, onArm }: { meal: Meal; armed: boolean; onArm: (
           </span>
           <span className="block truncate text-xs text-[color:var(--color-muted)]">
             {meal.demo ? 'DEMO · ' : ''}
-            {meal.ingredients.length} Zutat{meal.ingredients.length === 1 ? '' : 'en'}
+            {meal.noShopping
+              ? 'kein Einkauf'
+              : `${meal.ingredients.length} Zutat${meal.ingredients.length === 1 ? '' : 'en'}`}
           </span>
         </span>
       </button>
