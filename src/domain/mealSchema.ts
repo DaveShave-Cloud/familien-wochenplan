@@ -33,6 +33,8 @@ export interface MealImportInput {
   /** null = Portionsbasis ausdruecklich nicht beziffert. */
   servings?: number | null;
   cookingTime?: string;
+  /** true = Gericht ohne Einkauf (auswaerts essen, liefern lassen). */
+  noShopping?: boolean;
   tags?: string[];
   active?: boolean;
   demo?: boolean;
@@ -283,7 +285,8 @@ export function parseMeal(
     errors.push({ path: `${path}.ingredients`, message: `"${name}": "ingredients" muss eine Liste sein.` });
     return null;
   }
-  if (raw.ingredients.length === 0) {
+  // Bei "auswaerts essen" ist die leere Zutatenliste gewollt.
+  if (raw.ingredients.length === 0 && raw.noShopping !== true) {
     warnings.push({ path: `${path}.ingredients`, message: `"${name}" hat keine Zutaten.` });
   }
 
@@ -407,6 +410,7 @@ export function parseMeal(
   if (number !== null && Number.isInteger(number) && number > 0) meal.number = number;
   const cookingTime = asString(raw.cookingTime);
   if (cookingTime) meal.cookingTime = cookingTime;
+  if (raw.noShopping === true) meal.noShopping = true;
   if (groups.length > 0) meal.choiceGroups = groups;
   if (Array.isArray(raw.tags)) {
     const tags = raw.tags.map(asString).filter((t): t is string => Boolean(t));
@@ -521,6 +525,7 @@ export function serializeMeals(
       if (meal.recipe) entry.recipe = meal.recipe;
       if (meal.image) entry.image = meal.image;
       if (meal.cookingTime) entry.cookingTime = meal.cookingTime;
+      if (meal.noShopping) entry.noShopping = true;
       if (meal.servings !== undefined) entry.servings = meal.servings;
       if (meal.tags?.length) entry.tags = meal.tags;
       if (meal.demo) entry.demo = true;

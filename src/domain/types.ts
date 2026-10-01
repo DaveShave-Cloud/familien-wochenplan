@@ -175,6 +175,12 @@ export interface Meal {
   servings?: number | null;
   /** Ungefaehre Zubereitungsdauer als Freitext, z. B. "ca. 20 Minuten". */
   cookingTime?: string;
+  /**
+   * Gericht, fuer das nichts eingekauft wird -- auswaerts essen, liefern
+   * lassen. Es erscheint im Wochenplan, steuert aber nichts zur Einkaufsliste
+   * bei. Eine leere Zutatenliste ist hier Absicht und kein Fehler.
+   */
+  noShopping?: boolean;
   /** Auswahlgruppen (Beilage, Teig, Variante ...). */
   choiceGroups?: MealChoiceGroup[];
   ingredients: MealIngredient[];
