@@ -31,7 +31,7 @@ import {
   togglePerson,
 } from '../../data/repositories';
 import { effectiveChoices } from '../../domain/shoppingList';
-import { SEED_MEAL_COUNT, loadSeedMeals } from '../../data/seedMeals';
+import { SEED_MEAL_COUNT, loadSeedMeals, missingSeedMealCount } from '../../data/seedMeals';
 import { useApp, useAppData, useMealMap, useWeek } from '../store';
 import { WeekNavigator } from '../components/WeekNavigator';
 import { PersonBadges, PersonChip } from '../components/PersonChip';
@@ -98,6 +98,7 @@ function MealPool({
   onLoadSeed,
   loadingSeed,
   placement,
+  missing,
 }: {
   meals: Meal[];
   armedMealId: ID | null;
@@ -105,6 +106,7 @@ function MealPool({
   onLoadSeed: () => void;
   loadingSeed: boolean;
   placement: 'bottom' | 'side';
+  missing: number;
 }) {
   const [search, setSearch] = useState('');
   const { setView } = useApp();
@@ -135,6 +137,23 @@ function MealPool({
           verwalten
         </button>
       </div>
+
+      {missing > 0 && meals.length > 0 && (
+        <div className="mt-2 flex flex-wrap items-center justify-between gap-2 rounded-xl bg-[color:var(--color-parchment)] px-3 py-2">
+          <span className="text-sm">
+            {missing} von {SEED_MEAL_COUNT} Gerichten fehlen auf diesem Gerät.
+          </span>
+          <button
+            type="button"
+            data-testid="pool-load-missing"
+            disabled={loadingSeed}
+            onClick={onLoadSeed}
+            className="tap rounded-lg bg-[color:var(--color-terracotta)] px-4 text-sm font-semibold text-white disabled:opacity-50"
+          >
+            {loadingSeed ? 'Einen Moment…' : 'Jetzt nachladen'}
+          </button>
+        </div>
+      )}
 
       <label className="sr-only" htmlFor="meal-search">
         Gericht suchen
@@ -517,6 +536,7 @@ export function WeekPlanView() {
   const layoutRef = useRef<HTMLDivElement>(null);
   const daysRef = useRef<HTMLDivElement>(null);
   const activeMealCount = useMemo(() => meals.filter((meal) => meal.active).length, [meals]);
+  const missingSeedMeals = useMemo(() => missingSeedMealCount(meals), [meals]);
   const placement = usePoolPlacement(layoutRef, daysRef, activeMealCount);
 
   /** Gerichte direkt aus dem leeren Pool heraus laden, ohne Umweg ueber die Verwaltung. */
@@ -691,6 +711,7 @@ export function WeekPlanView() {
             onLoadSeed={() => void handleLoadSeed()}
             loadingSeed={loadingSeed}
             placement={placement}
+            missing={missingSeedMeals}
           />
         </div>
       </div>

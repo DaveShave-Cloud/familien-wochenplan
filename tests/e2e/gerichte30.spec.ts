@@ -137,3 +137,35 @@ test('Gericht ohne Einkauf erscheint im Plan, aber nicht auf der Liste', async (
   await goToView(page, 'Einkaufsliste');
   await expect(page.getByText(/noch keine Gerichte eingeplant|nichts einzukaufen/)).toBeVisible();
 });
+
+test('weist darauf hin, wenn auf diesem Gerät Gerichte fehlen', async ({ page }) => {
+  await loadSeed(page);
+  await goToView(page, 'Wochenplan');
+
+  // Zustand nachstellen, wie er entsteht, wenn man geladen hat, als die
+  // Liste noch kürzer war: nur die Gerichte 1-17 sind gespeichert.
+  await page.evaluate(async () => {
+    const req = indexedDB.open('familien-wochenplan');
+    const db: IDBDatabase = await new Promise((r) => {
+      req.onsuccess = () => r(req.result);
+    });
+    const tx = db.transaction('meals', 'readwrite');
+    const store = tx.objectStore('meals');
+    const all: Array<{ id: string; number?: number }> = await new Promise((r) => {
+      const q = store.getAll();
+      q.onsuccess = () => r(q.result);
+    });
+    for (const meal of all) if ((meal.number ?? 0) > 17) store.delete(meal.id);
+    await new Promise((r) => {
+      tx.oncomplete = r;
+    });
+  });
+  await page.reload();
+  await expect(page.locator('[data-testid^="pool-meal-"]')).toHaveCount(17);
+
+  await expect(page.getByText('13 von 30 Gerichten fehlen auf diesem Gerät.')).toBeVisible();
+  await page.getByTestId('pool-load-missing').click();
+
+  await expect(page.locator('[data-testid^="pool-meal-"]')).toHaveCount(30);
+  await expect(page.getByTestId('pool-load-missing')).toHaveCount(0);
+});
