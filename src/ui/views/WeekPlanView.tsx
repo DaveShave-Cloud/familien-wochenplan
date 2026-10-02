@@ -7,7 +7,7 @@
  * Weg 2 ist nicht nur Notloesung, sondern auf dem iPad oft der schnellere Weg
  * und die barrierefreie Alternative zum Ziehen.
  */
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import {
   DndContext,
   DragOverlay,
@@ -97,12 +97,14 @@ function MealPool({
   onArm,
   onLoadSeed,
   loadingSeed,
+  placement,
 }: {
   meals: Meal[];
   armedMealId: ID | null;
   onArm: (id: ID) => void;
   onLoadSeed: () => void;
   loadingSeed: boolean;
+  placement: 'bottom' | 'side';
 }) {
   const [search, setSearch] = useState('');
   const { setView } = useApp();
@@ -117,7 +119,11 @@ function MealPool({
   return (
     <section
       aria-label="Unsere Gerichte"
-      className="flex min-h-0 flex-1 flex-col rounded-2xl border border-[color:var(--color-line)] bg-white/60 p-2.5 max-md:flex-none max-md:shrink-0 [@media(min-width:1024px)_and_(max-height:900px)]:w-[36.5rem] [@media(min-width:1024px)_and_(max-height:900px)]:flex-none [@media(min-width:1024px)_and_(max-height:900px)]:shrink-0"
+      className={`flex min-h-0 flex-col rounded-2xl border border-[color:var(--color-line)] bg-white/60 p-2.5 ${
+        placement === 'side'
+          ? 'flex-1 max-md:flex-none max-md:shrink-0 md:w-[36.5rem] md:flex-none md:shrink-0'
+          : 'flex-none shrink-0'
+      }`}
     >
       <div className="flex items-baseline justify-between gap-2">
         <h2 className="text-base font-bold whitespace-nowrap xl:text-lg">Unsere Gerichte</h2>
@@ -336,6 +342,84 @@ function ChoiceEditor({ meal, assignment }: { meal: Meal; assignment: MealAssign
   );
 }
 
+
+/* ------------------------- Anordnung des Pools --------------------------- */
+
+/** Masse der Pool-Kacheln, muessen zu den Klassen in PoolCard passen. */
+const POOL_TILE_HEIGHT = 44;
+const POOL_GAP = 6;
+const POOL_MIN_COLUMN = 176; // 11rem
+/** Kopfzeile, Suchfeld, Innenabstand der Pool-Sektion. */
+const POOL_CHROME = 112;
+/** Breite der Pool-Spalte in der Seitenanordnung (36,5rem). */
+const POOL_SIDE_WIDTH = 584;
+/** Darunter wird eine Tageszeile zu schmal, um Gerichtskarten zu zeigen. */
+const DAYS_MIN_WIDTH = 440;
+
+/**
+ * Entscheidet, ob der Gerichte-Pool unter die Tage passt oder daneben muss.
+ *
+ * Eine feste Bildschirmgroesse als Grenze reicht dafuer nicht: Sobald Gerichte
+ * eingeplant sind, werden die Tageszeilen hoeher und der Platz darunter
+ * schrumpft. Deshalb wird hier gerechnet -- aus der tatsaechlichen Hoehe der
+ * Tage und dem Platz, den die Gerichte bei der aktuellen Breite brauchen.
+ */
+function usePoolPlacement(
+  containerRef: React.RefObject<HTMLDivElement | null>,
+  daysRef: React.RefObject<HTMLDivElement | null>,
+  mealCount: number,
+): 'bottom' | 'side' {
+  const [placement, setPlacement] = useState<'bottom' | 'side'>('bottom');
+
+  useLayoutEffect(() => {
+    const container = containerRef.current;
+    const days = daysRef.current;
+    if (!container || !days) return;
+
+    const decide = () => {
+      const available = container.clientHeight;
+      // Unterhalb von md wird ohnehin gestapelt und die Seite scrollt.
+      if (container.clientWidth < 768) return setPlacement('bottom');
+
+      const columns = Math.max(
+        1,
+        Math.floor((container.clientWidth + POOL_GAP) / (POOL_MIN_COLUMN + POOL_GAP)),
+      );
+      const rows = Math.max(1, Math.ceil(mealCount / columns));
+      const poolNeeded = rows * POOL_TILE_HEIGHT + (rows - 1) * POOL_GAP + POOL_CHROME;
+
+      /*
+       * Die natuerliche Hoehe der Tage aus den Zeilen selbst summieren.
+       * days.scrollHeight taugt dafuer nicht: In der Seitenanordnung ist das
+       * Element gestreckt und meldet die Containerhoehe -- die Rechnung liefe
+       * im Kreis und koennte nie zurueckschalten.
+       */
+      const rowsOfDays = Array.from(days.children) as HTMLElement[];
+      const daysNeeded =
+        rowsOfDays.reduce((sum, row) => sum + row.offsetHeight, 0) +
+        Math.max(0, rowsOfDays.length - 1) * POOL_GAP;
+
+      /*
+       * Die Seitenanordnung lohnt nur, wenn den Tagen danach noch genug Breite
+       * bleibt. Auf dem iPad im Hochformat waere eine Tageszeile sonst rund
+       * 210 px breit und damit unbrauchbar -- dann lieber den Pool scrollen
+       * lassen, denn die sieben Tage haben Vorrang.
+       */
+      const sideIsSensible = container.clientWidth >= POOL_SIDE_WIDTH + DAYS_MIN_WIDTH;
+      const fitsBelow = daysNeeded + POOL_GAP + poolNeeded <= available;
+      setPlacement(fitsBelow || !sideIsSensible ? 'bottom' : 'side');
+    };
+
+    decide();
+    const observer = new ResizeObserver(decide);
+    observer.observe(container);
+    observer.observe(days);
+    return () => observer.disconnect();
+  }, [containerRef, daysRef, mealCount]);
+
+  return placement;
+}
+
 /* --------------------------------- Tag ----------------------------------- */
 
 interface DayRowProps {
@@ -430,6 +514,10 @@ export function WeekPlanView() {
   const [expandedId, setExpandedId] = useState<ID | null>(null);
   const [dragging, setDragging] = useState<{ label: string } | null>(null);
   const [loadingSeed, setLoadingSeed] = useState(false);
+  const layoutRef = useRef<HTMLDivElement>(null);
+  const daysRef = useRef<HTMLDivElement>(null);
+  const activeMealCount = useMemo(() => meals.filter((meal) => meal.active).length, [meals]);
+  const placement = usePoolPlacement(layoutRef, daysRef, activeMealCount);
 
   /** Gerichte direkt aus dem leeren Pool heraus laden, ohne Umweg ueber die Verwaltung. */
   const handleLoadSeed = useCallback(async () => {
@@ -559,10 +647,26 @@ export function WeekPlanView() {
           um alle Gerichte gleichzeitig und mit lesbaren Namen zu zeigen.
           min-w-0 verhindert, dass lange Namen die Seite waagerecht ueberlaufen lassen.
         */}
-        <div className="flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto md:overflow-hidden [@media(min-width:1024px)_and_(max-height:900px)]:flex-row">
+        <div
+          ref={layoutRef}
+          className={`flex min-h-0 flex-1 gap-2 ${
+            placement === 'side'
+              ? 'flex-col overflow-y-auto md:flex-row md:overflow-hidden'
+              : // Unten: lieber den Bereich scrollen lassen als Tage oder
+                // Gerichte zusammenzudruecken.
+                'flex-col overflow-y-auto'
+          }`}
+        >
           {/* shrink-0: die sieben Tage behalten ihren Platz und bleiben immer
               vollstaendig sichtbar. Der Pool darunter nimmt, was uebrig bleibt. */}
-          <div className="flex min-w-0 shrink-0 flex-col gap-1.5 [@media(min-width:1024px)_and_(max-height:900px)]:min-h-0 [@media(min-width:1024px)_and_(max-height:900px)]:flex-1 [@media(min-width:1024px)_and_(max-height:900px)]:overflow-y-auto [@media(min-width:1024px)_and_(max-height:900px)]:pr-1">
+          {/* shrink-0: die sieben Tage behalten ihren Platz und bleiben immer
+              vollstaendig sichtbar. Der Pool nimmt, was uebrig bleibt. */}
+          <div
+            ref={daysRef}
+            className={`flex min-w-0 flex-col gap-1.5 ${
+              placement === 'side' ? 'md:min-h-0 md:flex-1 md:overflow-y-auto md:pr-1' : 'shrink-0'
+            }`}
+          >
             {!ready && <p className="p-4 text-[color:var(--color-muted)]">Daten werden geladen…</p>}
             {dates.map((date, index) => (
               <DayRow
@@ -586,6 +690,7 @@ export function WeekPlanView() {
             onArm={(id) => setArmedMealId(armedMealId === id ? null : id)}
             onLoadSeed={() => void handleLoadSeed()}
             loadingSeed={loadingSeed}
+            placement={placement}
           />
         </div>
       </div>
