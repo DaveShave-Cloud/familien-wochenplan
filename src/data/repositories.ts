@@ -15,6 +15,7 @@ import type {
   WeekId,
   WeekPlan,
 } from '../domain/types';
+import { compareMeals } from '../domain/types';
 import { newAssignmentId, newMerchantId, nowISO } from '../domain/ids';
 import { parseWeekId, weekRange } from '../domain/week';
 
@@ -88,7 +89,7 @@ export async function deleteMerchant(id: ID): Promise<void> {
 
 export async function listMeals(): Promise<Meal[]> {
   const meals = await db.meals.toArray();
-  return meals.sort((a, b) => a.name.localeCompare(b.name, 'de-DE'));
+  return meals.sort(compareMeals);
 }
 
 export async function getMeal(id: ID): Promise<Meal | undefined> {

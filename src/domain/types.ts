@@ -349,3 +349,15 @@ export interface BackupFile {
     settings: AppSettings | null;
   };
 }
+
+/**
+ * Reihenfolge der Gerichte: nach der festen Nummer 1-30, Gerichte ohne Nummer
+ * danach alphabetisch. Alphabetisch allein waere verwirrend, seit die Liste
+ * durchnummeriert ist -- man sucht nach "Nummer 24", nicht nach "B".
+ */
+export function compareMeals(a: Meal, b: Meal): number {
+  const an = a.number ?? Number.MAX_SAFE_INTEGER;
+  const bn = b.number ?? Number.MAX_SAFE_INTEGER;
+  if (an !== bn) return an - bn;
+  return a.name.localeCompare(b.name, 'de-DE');
+}

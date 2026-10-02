@@ -31,6 +31,7 @@ import {
   togglePerson,
 } from '../../data/repositories';
 import { effectiveChoices } from '../../domain/shoppingList';
+import { SEED_MEAL_COUNT, loadSeedMeals } from '../../data/seedMeals';
 import { useApp, useAppData, useMealMap, useWeek } from '../store';
 import { WeekNavigator } from '../components/WeekNavigator';
 import { PersonBadges, PersonChip } from '../components/PersonChip';
@@ -49,52 +50,60 @@ function PoolCard({ meal, armed, onArm }: { meal: Meal; armed: boolean; onArm: (
       ref={setNodeRef}
       data-draggable="true"
       data-testid={`pool-meal-${meal.id}`}
-      className={`card overflow-hidden transition-shadow ${isDragging ? 'opacity-40' : ''} ${
+      className={`card h-11 shrink-0 overflow-hidden transition-shadow ${isDragging ? 'opacity-40' : ''} ${
         armed ? 'ring-3 ring-[color:var(--color-terracotta)]' : ''
       }`}
     >
       <button
         type="button"
         onClick={onArm}
-        className="flex w-full items-center gap-2.5 p-2 text-left"
+        className="flex min-h-11 w-full items-center gap-2 px-2.5 py-2 text-left"
         {...attributes}
         {...listeners}
         // Nach dem Spread, damit der Vormerk-Zustand nicht von dnd-kit ueberschrieben wird.
         aria-pressed={armed}
+        // Die Nummer steht sichtbar in einem eigenen Feld; ohne diese Beschriftung
+        // bliebe sie fuer Screenreader unhoerbar.
+        aria-label={meal.number ? `${meal.number}. ${meal.name}` : meal.name}
+        title={meal.name}
       >
-        {meal.image ? (
-          <img
-            src={meal.image}
-            alt=""
-            className="h-11 w-11 shrink-0 rounded-xl object-cover"
-            draggable={false}
-          />
-        ) : (
+        {/* Die Nummer ist der Anker: danach sucht man in der Gerichteliste. */}
+        <span
+          aria-hidden="true"
+          className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-[color:var(--color-parchment)] text-xs font-bold tabular-nums"
+        >
+          {meal.number ?? '–'}
+        </span>
+        <span className="min-w-0 flex-1 truncate text-sm font-semibold leading-tight">
+          {meal.name}
+        </span>
+        {meal.noShopping && (
           <span
+            title="Kein Einkauf nötig"
             aria-hidden="true"
-            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[color:var(--color-parchment)] text-xl"
+            className="shrink-0 rounded-full bg-[color:var(--color-sage)] px-1.5 text-[0.6rem] font-bold text-white"
           >
-            🍽️
+            0
           </span>
         )}
-        <span className="min-w-0 flex-1">
-          <span className="block truncate text-sm font-bold">
-            {meal.number ? <span className="opacity-50">{meal.number}. </span> : null}
-            {meal.name}
-          </span>
-          <span className="block truncate text-xs text-[color:var(--color-muted)]">
-            {meal.demo ? 'DEMO · ' : ''}
-            {meal.noShopping
-              ? 'kein Einkauf'
-              : `${meal.ingredients.length} Zutat${meal.ingredients.length === 1 ? '' : 'en'}`}
-          </span>
-        </span>
       </button>
     </div>
   );
 }
 
-function MealPool({ meals, armedMealId, onArm }: { meals: Meal[]; armedMealId: ID | null; onArm: (id: ID) => void }) {
+function MealPool({
+  meals,
+  armedMealId,
+  onArm,
+  onLoadSeed,
+  loadingSeed,
+}: {
+  meals: Meal[];
+  armedMealId: ID | null;
+  onArm: (id: ID) => void;
+  onLoadSeed: () => void;
+  loadingSeed: boolean;
+}) {
   const [search, setSearch] = useState('');
   const { setView } = useApp();
 
@@ -108,7 +117,7 @@ function MealPool({ meals, armedMealId, onArm }: { meals: Meal[]; armedMealId: I
   return (
     <section
       aria-label="Unsere Gerichte"
-      className="flex flex-col rounded-2xl border border-[color:var(--color-line)] bg-white/60 p-3 md:min-h-0"
+      className="flex min-h-0 flex-1 flex-col rounded-2xl border border-[color:var(--color-line)] bg-white/60 p-2.5 max-md:flex-none max-md:shrink-0 [@media(min-width:1024px)_and_(max-height:900px)]:w-[36.5rem] [@media(min-width:1024px)_and_(max-height:900px)]:flex-none [@media(min-width:1024px)_and_(max-height:900px)]:shrink-0"
     >
       <div className="flex items-baseline justify-between gap-2">
         <h2 className="text-base font-bold whitespace-nowrap xl:text-lg">Unsere Gerichte</h2>
@@ -133,13 +142,34 @@ function MealPool({ meals, armedMealId, onArm }: { meals: Meal[]; armedMealId: I
         className="tap mt-2 w-full rounded-xl border border-[color:var(--color-line)] bg-white px-3"
       />
 
-      <div className="mt-3 space-y-2 md:min-h-0 md:flex-1 md:overflow-y-auto md:pr-1">
+      {/*
+        Spaltenzahl richtet sich nach der Breite: auf dem iPad im Hochformat
+        drei, auf breiten Bildschirmen bis zu sechs. So sind alle Gerichte
+        gleichzeitig sichtbar, ohne die Kacheln unter Fingergroesse zu druecken.
+      */}
+      <div className="mt-2 grid min-h-0 flex-1 auto-rows-min content-start gap-1.5 overflow-y-auto pr-1 [grid-template-columns:repeat(auto-fill,minmax(11rem,1fr))]">
         {visible.length === 0 && (
-          <p className="rounded-xl bg-[color:var(--color-parchment)] p-4 text-sm text-[color:var(--color-muted)]">
-            {meals.length === 0
-              ? 'Noch keine Gerichte vorhanden. Lege unter „Gerichte“ welche an oder importiere eure Rezepte.'
-              : 'Kein Gericht gefunden.'}
-          </p>
+          <div className="col-span-full rounded-xl bg-[color:var(--color-parchment)] p-4 text-sm text-[color:var(--color-muted)]">
+            {meals.length === 0 ? (
+              <>
+                <p>
+                  Auf diesem Gerät sind noch keine Gerichte gespeichert. Jedes Gerät hat seinen
+                  eigenen Speicher.
+                </p>
+                <button
+                  type="button"
+                  data-testid="pool-load-seed"
+                  disabled={loadingSeed}
+                  onClick={onLoadSeed}
+                  className="tap mt-3 w-full rounded-xl bg-[color:var(--color-terracotta)] px-4 font-semibold text-white disabled:opacity-50"
+                >
+                  {loadingSeed ? 'Einen Moment…' : `Unsere ${SEED_MEAL_COUNT} Gerichte laden`}
+                </button>
+              </>
+            ) : (
+              <p>Kein Gericht gefunden.</p>
+            )}
+          </div>
         )}
         {visible.map((meal) => (
           <PoolCard key={meal.id} meal={meal} armed={armedMealId === meal.id} onArm={() => onArm(meal.id)} />
@@ -394,11 +424,27 @@ function DayRow({
 
 export function WeekPlanView() {
   const { weekId, setWeekId, armedMealId, setArmedMealId, notify, setView } = useApp();
-  const { persons, meals, ready } = useAppData();
+  const { persons, meals, merchants, ready } = useAppData();
   const { assignments } = useWeek(weekId);
   const mealsById = useMealMap(meals);
   const [expandedId, setExpandedId] = useState<ID | null>(null);
   const [dragging, setDragging] = useState<{ label: string } | null>(null);
+  const [loadingSeed, setLoadingSeed] = useState(false);
+
+  /** Gerichte direkt aus dem leeren Pool heraus laden, ohne Umweg ueber die Verwaltung. */
+  const handleLoadSeed = useCallback(async () => {
+    setLoadingSeed(true);
+    try {
+      const result = await loadSeedMeals(merchants);
+      if (!result.ok) {
+        notify('Die Gerichte konnten nicht geladen werden.', 'error');
+        return;
+      }
+      notify(`${result.added.length} Gerichte geladen.`, 'success');
+    } finally {
+      setLoadingSeed(false);
+    }
+  }, [merchants, notify]);
 
   const dates = useMemo(() => weekDates(weekId), [weekId]);
 
@@ -507,11 +553,16 @@ export function WeekPlanView() {
           </div>
         )}
 
-        {/* md = 768 px: das iPad im Hochformat (834 px) bekommt bereits die
-            Zweiteilung Plan | Pool. min-w-0 verhindert, dass lange Namen die
-            Spalten aufblaehen und die Seite waagerecht ueberlaufen laesst. */}
-        <div className="grid min-h-0 flex-1 grid-cols-1 gap-2 overflow-y-auto md:grid-cols-[1fr_16.5rem] md:overflow-hidden lg:grid-cols-[1fr_18rem] xl:grid-cols-[1fr_22rem] xl:gap-3">
-          <div className="flex min-w-0 flex-col gap-1.5 md:min-h-0 md:overflow-y-auto md:pr-1">
+        {/*
+          Tage oben, Gerichte unten ueber die volle Breite. Der Platz unterhalb
+          von Sonntag wird dadurch genutzt, und der Pool bekommt genug Breite,
+          um alle Gerichte gleichzeitig und mit lesbaren Namen zu zeigen.
+          min-w-0 verhindert, dass lange Namen die Seite waagerecht ueberlaufen lassen.
+        */}
+        <div className="flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto md:overflow-hidden [@media(min-width:1024px)_and_(max-height:900px)]:flex-row">
+          {/* shrink-0: die sieben Tage behalten ihren Platz und bleiben immer
+              vollstaendig sichtbar. Der Pool darunter nimmt, was uebrig bleibt. */}
+          <div className="flex min-w-0 shrink-0 flex-col gap-1.5 [@media(min-width:1024px)_and_(max-height:900px)]:min-h-0 [@media(min-width:1024px)_and_(max-height:900px)]:flex-1 [@media(min-width:1024px)_and_(max-height:900px)]:overflow-y-auto [@media(min-width:1024px)_and_(max-height:900px)]:pr-1">
             {!ready && <p className="p-4 text-[color:var(--color-muted)]">Daten werden geladen…</p>}
             {dates.map((date, index) => (
               <DayRow
@@ -533,6 +584,8 @@ export function WeekPlanView() {
             meals={meals}
             armedMealId={armedMealId}
             onArm={(id) => setArmedMealId(armedMealId === id ? null : id)}
+            onLoadSeed={() => void handleLoadSeed()}
+            loadingSeed={loadingSeed}
           />
         </div>
       </div>

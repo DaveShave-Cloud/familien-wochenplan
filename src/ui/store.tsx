@@ -13,6 +13,7 @@ import { db } from '../data/db';
 import { ensureSeeded } from '../data/repositories';
 import { defaultSettings } from '../data/defaults';
 import type { AppSettings, ID, Meal, MealAssignment, Merchant, Person, WeekId, WeekPlan } from '../domain/types';
+import { compareMeals } from '../domain/types';
 import { currentWeekId } from '../domain/week';
 
 export type ViewName = 'plan' | 'shopping' | 'meals' | 'settings';
@@ -155,7 +156,7 @@ export function useAppData(): AppData {
     return {
       persons: persons.sort((a, b) => a.order - b.order),
       merchants: merchants.sort((a, b) => a.order - b.order),
-      meals: meals.sort((a, b) => a.name.localeCompare(b.name, 'de-DE')),
+      meals: meals.sort(compareMeals),
       settings: settings ?? defaultSettings(),
     };
   }, [seeded]);
