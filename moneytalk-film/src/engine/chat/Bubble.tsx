@@ -65,6 +65,8 @@ export interface MessageBubbleProps {
   appear: number;
   /** Zugestellt (zwei Haken) statt nur gesendet. */
   delivered: boolean;
+  /** Gelesen (blaue Haken) – nur in Direktchats. */
+  read?: boolean;
 }
 
 export const MessageBubble: React.FC<MessageBubbleProps> = ({
@@ -79,6 +81,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
   avatar,
   appear,
   delivered,
+  read = false,
 }) => {
   const showAvatarColumn = group && !outgoing;
   const metaWidth = outgoing ? 122 : 78;
@@ -159,7 +162,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
           }}
         >
           {clock}
-          {outgoing ? <Ticks size={22} color={theme.metaOut} double={delivered} /> : null}
+          {outgoing ? <Ticks size={22} color={read ? theme.tickBlue : theme.metaOut} double={delivered} /> : null}
         </div>
       </div>
     </div>

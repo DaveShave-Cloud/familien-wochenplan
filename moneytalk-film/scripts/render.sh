@@ -1,10 +1,12 @@
 #!/usr/bin/env bash
-# Rendert den Film als MP4 (H.264, yuv420p, AAC, faststart).
+# Rendert einen Film als MP4 (H.264, yuv420p, AAC, faststart).
 #
-#   bash scripts/render.sh film1         vollständiger Film, Ersatzsequenzen gekennzeichnet
-#   bash scripts/render.sh film1-clean   vollständiger Film ohne Kennzeichnung
-#   bash scripts/render.sh test          Testszene (erste 45,5 Sekunden)
-#   bash scripts/render.sh range 2700 3300 ausschnitt   beliebiger Frame-Bereich
+#   bash scripts/render.sh film1          Film 1, Ersatzsequenzen gekennzeichnet
+#   bash scripts/render.sh film1-clean    Film 1 ohne Kennzeichnung
+#   bash scripts/render.sh film2          Film 2, Ersatzsequenzen gekennzeichnet
+#   bash scripts/render.sh film2-clean    Film 2 ohne Kennzeichnung
+#   bash scripts/render.sh test           Testszene (erste 45,5 Sekunden von Film 1)
+#   COMP=Film2 bash scripts/render.sh range 2700 3300 ausschnitt   beliebiger Frame-Bereich
 #
 # Remotion-Lizenz: siehe PROJEKT.md. Mit Lizenzschlüssel: REMOTION_LICENSE_KEY=… setzen.
 set -euo pipefail
@@ -13,12 +15,15 @@ node scripts/generate-audio.mjs --if-missing
 
 MODE="${1:-film1}"
 PROPS='{"showPlaceholderLabels":true}'
+CLEAN='{"showPlaceholderLabels":false}'
 RANGE=()
 case "$MODE" in
-  film1)       NAME="ploetzlich-steht-alles-still_vorschau" ;;
-  film1-clean) NAME="ploetzlich-steht-alles-still_ohne-kennzeichnung"; PROPS='{"showPlaceholderLabels":false}' ;;
-  test)        NAME="film1_testszene"; RANGE=(--frames=0-1364) ;;
-  range)       NAME="film1_${4:-ausschnitt}"; RANGE=(--frames="$2-$3") ;;
+  film1)       COMP=Film1; NAME="ploetzlich-steht-alles-still_vorschau" ;;
+  film1-clean) COMP=Film1; NAME="ploetzlich-steht-alles-still_ohne-kennzeichnung"; PROPS="$CLEAN" ;;
+  film2)       COMP=Film2; NAME="gut-dass-wir-vorbereitet-sind_vorschau" ;;
+  film2-clean) COMP=Film2; NAME="gut-dass-wir-vorbereitet-sind_ohne-kennzeichnung"; PROPS="$CLEAN" ;;
+  test)        COMP=Film1; NAME="film1_testszene"; RANGE=(--frames=0-1364) ;;
+  range)       COMP="${COMP:-Film1}"; NAME="${COMP,,}_${4:-ausschnitt}"; RANGE=(--frames="$2-$3") ;;
   *) echo "Unbekannter Modus: $MODE" >&2; exit 1 ;;
 esac
 
@@ -30,7 +35,7 @@ LICENSE=(--is-production=false)
 if [ -n "${REMOTION_LICENSE_KEY:-}" ]; then LICENSE=(--license-key="$REMOTION_LICENSE_KEY"); fi
 
 # IMAGE_FORMAT=jpeg rendert etwa doppelt so schnell (für Zwischenstände), png ist die Endqualität.
-npx remotion render Film1 "$RAW" "${RANGE[@]}" --props="$PROPS" \
+npx remotion render "$COMP" "$RAW" "${RANGE[@]}" --props="$PROPS" \
   --image-format="${IMAGE_FORMAT:-png}" \
   --concurrency="${CONCURRENCY:-$(nproc)}" --log=info "${LICENSE[@]}"
 

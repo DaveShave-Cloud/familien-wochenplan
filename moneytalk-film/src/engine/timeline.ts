@@ -127,24 +127,31 @@ export const buildFeed = (film: CompiledFilm, chatId: string, owner: string): Fe
     ...film.cues.filter((c) => c.msg.chat === chatId).map((c) => ({msg: c.msg, frame: c.frame, cue: c})),
   ];
 
+  const minutes = (clock: string) => {
+    const [h, m] = clock.split(':').map(Number);
+    return h * 60 + m;
+  };
   let day: string | null = null;
-  let prevFrom: string | null = null;
+  let prev: ScriptMessage | null = null;
   for (const e of entries) {
     if (e.msg.day !== day) {
       day = e.msg.day;
-      prevFrom = null;
+      prev = null;
       feed.push({type: 'day', key: `day-${day}`, label: day, frame: e.frame});
     }
+    // Neuer Absenderblock bei anderem Absender – oder wenn dazwischen viel Zeit liegt
+    // (dann zeigt die Blase Name und Bild erneut, damit das Publikum nicht raten muss).
+    const first = !prev || prev.from !== e.msg.from || minutes(e.msg.clock) - minutes(prev.clock) > 10;
     feed.push({
       type: 'message',
       key: e.msg.id,
       msg: e.msg,
       frame: e.frame,
       outgoing: e.msg.from === owner,
-      first: prevFrom !== e.msg.from,
+      first,
       cue: e.cue,
     });
-    prevFrom = e.msg.from;
+    prev = e.msg;
   }
   return feed;
 };

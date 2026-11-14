@@ -21,6 +21,10 @@ const palettes: Record<BackdropId, {base: string; a: string; b: string; c: strin
   buero: {base: '#090c10', a: 'rgba(176,196,212,0.12)', b: 'rgba(120,140,160,0.09)', c: 'rgba(210,200,180,0.05)'},
   // der Druck steigt: wärmer, enger
   druck: {base: '#0b0909', a: 'rgba(196,96,62,0.12)', b: 'rgba(110,128,150,0.09)', c: 'rgba(220,150,80,0.05)'},
+  // heller Vormittag: es läuft (Film 2)
+  tag: {base: '#0a0e12', a: 'rgba(206,220,232,0.17)', b: 'rgba(240,204,150,0.12)', c: 'rgba(210,220,228,0.07)'},
+  // warmes Sonnenlicht: Erleichterung (Film 2)
+  zuversicht: {base: '#0f0d0a', a: 'rgba(250,196,112,0.2)', b: 'rgba(214,224,232,0.12)', c: 'rgba(255,216,150,0.09)'},
 };
 
 const Backdrop: React.FC<{id: BackdropId; frame: number}> = ({id, frame}) => {

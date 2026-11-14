@@ -2,6 +2,7 @@ import React from 'react';
 import {AbsoluteFill} from 'remotion';
 import {UI_FONT} from '../../fonts';
 import type {CutsceneSlot} from '../../types';
+import {ChefbueroOrdner, FreigabeZuZweit, Notfallordner, ProduktionLaeuft, VertriebTelefoniert} from './film2';
 import type {PlaceholderProps} from './kit';
 import {Buchhaltung, ChefbueroLeer, Chefplatz, KatjaNah, Produktion, SvenBuero, Vertrieb} from './innen';
 import {EingangMarkus, Parkplatz, UhrHandy} from './szene1';
@@ -24,6 +25,12 @@ export const placeholders: Record<string, React.FC<PlaceholderProps>> = {
   chefplatz: Chefplatz,
   produktion: Produktion,
   chefbuero: ChefbueroLeer,
+  // nur Film 2
+  notfallordner: Notfallordner,
+  freigabe: FreigabeZuZweit,
+  vertriebTelefon: VertriebTelefoniert,
+  produktionLaeuft: ProduktionLaeuft,
+  chefbueroOrdner: ChefbueroOrdner,
 };
 
 /** Rückfall, falls für einen Slot noch keine Ersatzsequenz gezeichnet ist: neutrale Texttafel. */

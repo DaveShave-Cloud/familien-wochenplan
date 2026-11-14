@@ -38,8 +38,10 @@ export const Scene: React.FC<{
   background: string;
   grain?: number;
   vignette?: number;
+  /** 0–1: warmes Tageslicht über der ganzen Szene (Film 2). */
+  warm?: number;
   children: React.ReactNode;
-}> = ({frame, camera, background, grain = 0.38, vignette = 0.6, children}) => {
+}> = ({frame, camera, background, grain = 0.38, vignette = 0.6, warm = 0, children}) => {
   const {scale = 1, x = 0, y = 0, pivot = [960, 540]} = camera ?? {};
   return (
     <AbsoluteFill style={{background, overflow: 'hidden'}}>
@@ -48,6 +50,15 @@ export const Scene: React.FC<{
           {children}
         </g>
       </svg>
+      {warm > 0 ? (
+        <AbsoluteFill
+          style={{
+            background: 'radial-gradient(ellipse 90% 90% at 72% 24%, rgba(255,206,140,0.34), rgba(255,188,120,0.1) 70%, rgba(255,180,110,0.04) 100%)',
+            mixBlendMode: 'screen',
+            opacity: warm,
+          }}
+        />
+      ) : null}
       <Grain frame={frame} opacity={grain} />
       <AbsoluteFill
         style={{

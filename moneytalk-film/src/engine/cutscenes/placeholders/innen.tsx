@@ -8,13 +8,13 @@ import {Figure, Scene, lerp, lin, mixPose, rnd, span, type PlaceholderProps, typ
  * mit anderem Licht und anderen Posen wiederverwendet werden.
  */
 
-const FLOOR = 900;
-const COOL_RIM = {color: '#9fb6cc', dx: -0.45, dy: -0.6, opacity: 0.32};
-const DARK = {color: '#070b10', backColor: '#04070a'};
+export const FLOOR = 900;
+export const COOL_RIM = {color: '#9fb6cc', dx: -0.45, dy: -0.6, opacity: 0.32};
+export const DARK = {color: '#070b10', backColor: '#04070a'};
 
 // ───────────────────────── Bausteine ─────────────────────────
 
-const Raum: React.FC<{id: string; top?: string; bottom?: string; floor?: string}> = ({
+export const Raum: React.FC<{id: string; top?: string; bottom?: string; floor?: string}> = ({
   id,
   top = '#18212b',
   bottom = '#0f161e',
@@ -34,7 +34,7 @@ const Raum: React.FC<{id: string; top?: string; bottom?: string; floor?: string}
 );
 
 /** Fenster mit Jalousie; wirft kühles Tageslicht in den Raum. */
-const Fenster: React.FC<{id: string; x: number; y: number; w: number; h: number; strength?: number; color?: string}> = ({
+export const Fenster: React.FC<{id: string; x: number; y: number; w: number; h: number; strength?: number; color?: string}> = ({
   id,
   x,
   y,
@@ -71,7 +71,7 @@ const Fenster: React.FC<{id: string; x: number; y: number; w: number; h: number;
   </>
 );
 
-const Tisch: React.FC<{x: number; y: number; w: number; color?: string}> = ({x, y, w, color = '#1a242e'}) => (
+export const Tisch: React.FC<{x: number; y: number; w: number; color?: string}> = ({x, y, w, color = '#1a242e'}) => (
   <g>
     <rect x={x + 26} y={y + 18} width={w - 52} height={FLOOR - y - 70} fill="#0c1218" />
     <rect x={x + 18} y={y + 18} width={20} height={FLOOR - y - 18} fill="#111920" />
@@ -82,13 +82,20 @@ const Tisch: React.FC<{x: number; y: number; w: number; color?: string}> = ({x, 
 );
 
 /** Lichtschein eines Bildschirms auf Wand und Raum (vor den Figuren zeichnen). */
-const MonitorSchein: React.FC<{id: string; x: number; y: number; on?: number; facing?: 1 | -1}> = ({id, x, y, on = 1, facing = -1}) => (
+export const MonitorSchein: React.FC<{id: string; x: number; y: number; on?: number; facing?: 1 | -1; farbe?: string}> = ({
+  id,
+  x,
+  y,
+  on = 1,
+  facing = -1,
+  farbe = '#bcd8ff',
+}) => (
   <>
     <defs>
       <radialGradient id={`monG-${id}`}>
-        <stop offset="0" stopColor="#bcd8ff" stopOpacity={0.26} />
-        <stop offset="0.5" stopColor="#bcd8ff" stopOpacity={0.08} />
-        <stop offset="1" stopColor="#bcd8ff" stopOpacity={0} />
+        <stop offset="0" stopColor={farbe} stopOpacity={0.26} />
+        <stop offset="0.5" stopColor={farbe} stopOpacity={0.08} />
+        <stop offset="1" stopColor={farbe} stopOpacity={0} />
       </radialGradient>
     </defs>
     <ellipse cx={x + facing * 250} cy={y - 165} rx={560} ry={430} fill={`url(#monG-${id})`} opacity={on} />
@@ -96,17 +103,23 @@ const MonitorSchein: React.FC<{id: string; x: number; y: number; on?: number; fa
 );
 
 /** Bildschirm in Schrägansicht. `facing` = Richtung, in die der Schirm leuchtet. */
-const Monitor: React.FC<{x: number; y: number; on?: number; facing?: 1 | -1}> = ({x, y, on = 0, facing = -1}) => (
+export const Monitor: React.FC<{x: number; y: number; on?: number; facing?: 1 | -1; farbe?: string}> = ({
+  x,
+  y,
+  on = 0,
+  facing = -1,
+  farbe = '#cfe2ff',
+}) => (
   <g transform={`translate(${x} ${y}) scale(${facing} 1)`}>
     <rect x={-52} y={-10} width={104} height={10} rx={3} fill="#0b1016" />
     <rect x={-8} y={-84} width={16} height={78} fill="#0b1016" />
     <path d="M-22 -252 L14 -264 L14 -66 L-22 -74Z" fill="#0a0f15" />
     <path d="M14 -264 L26 -260 L26 -70 L14 -66Z" fill="#161f29" />
-    <path d="M14 -258 L24 -255 L24 -74 L14 -71Z" fill="#cfe2ff" opacity={on} />
+    <path d="M14 -258 L24 -255 L24 -74 L14 -71Z" fill={farbe} opacity={on} />
   </g>
 );
 
-const Stuhl: React.FC<{x: number; seat: number; facing?: 1 | -1; tilt?: number; high?: boolean}> = ({
+export const Stuhl: React.FC<{x: number; seat: number; facing?: 1 | -1; tilt?: number; high?: boolean}> = ({
   x,
   seat,
   facing = 1,
@@ -125,7 +138,7 @@ const Stuhl: React.FC<{x: number; seat: number; facing?: 1 | -1; tilt?: number; 
   </g>
 );
 
-const Ordnerregal: React.FC<{x: number; y: number; w: number; rows: number; seed: string}> = ({x, y, w, rows, seed}) => {
+export const Ordnerregal: React.FC<{x: number; y: number; w: number; rows: number; seed: string}> = ({x, y, w, rows, seed}) => {
   const rowH = 132;
   const colors = ['#27323d', '#2c2a35', '#223039', '#33302a', '#1f2a33'];
   return (
@@ -160,7 +173,7 @@ const Ordnerregal: React.FC<{x: number; y: number; w: number; rows: number; seed
   );
 };
 
-const Papierstapel: React.FC<{x: number; y: number; n?: number; seed: string}> = ({x, y, n = 6, seed}) => (
+export const Papierstapel: React.FC<{x: number; y: number; n?: number; seed: string}> = ({x, y, n = 6, seed}) => (
   <g>
     {Array.from({length: n}, (_, i) => (
       <rect
@@ -178,27 +191,30 @@ const Papierstapel: React.FC<{x: number; y: number; n?: number; seed: string}> =
 );
 
 /** Tischtelefon mit Anruflampe. */
-const Tischtelefon: React.FC<{x: number; y: number; scale?: number; led?: number; display?: number}> = ({
-  x,
-  y,
-  scale = 1,
-  led = 0,
-  display = 0.3,
-}) => (
+export const Tischtelefon: React.FC<{
+  x: number;
+  y: number;
+  scale?: number;
+  led?: number;
+  display?: number;
+  /** Hörer liegt auf (false = abgenommen, es wird telefoniert). */
+  handset?: boolean;
+  ledColor?: string;
+}> = ({x, y, scale = 1, led = 0, display = 0.3, handset = true, ledColor = '#ff4a3a'}) => (
   <g transform={`translate(${x} ${y}) scale(${scale})`}>
     <path d="M-104 0 L-92 -44 L92 -62 L104 0Z" fill="#141b22" />
     <path d="M-92 -44 L92 -62 L92 -56 L-92 -38Z" fill="#232d37" />
-    <rect x={-112} y={-78} width={64} height={34} rx={14} fill="#0b1015" transform="rotate(-6 -80 -60)" />
+    {handset ? <rect x={-112} y={-78} width={64} height={34} rx={14} fill="#0b1015" transform="rotate(-6 -80 -60)" /> : null}
     <rect x={-22} y={-52} width={72} height={24} rx={3} fill="#9fd0c0" opacity={display} transform="skewY(-5.6)" />
     {[0, 1, 2].map((r) =>
       [0, 1, 2].map((c) => <circle key={`${r}${c}`} cx={-12 + c * 20} cy={-12 - c * 1.9 + r * -0 - 8 + r * 7} r={3.6} fill="#2d3842" />),
     )}
-    <circle cx={76} cy={-40} r={7} fill="#ff4a3a" opacity={0.15 + 0.85 * led} />
-    <circle cx={76} cy={-40} r={34} fill="#ff4a3a" opacity={0.2 * led} />
+    <circle cx={76} cy={-40} r={7} fill={ledColor} opacity={0.15 + 0.85 * led} />
+    <circle cx={76} cy={-40} r={34} fill={ledColor} opacity={0.2 * led} />
   </g>
 );
 
-const sit = (extra: Pose = {}): Pose => ({drop: 24, legF: [86, 84], legB: [80, 82], lean: 3, armF: [18, 62], armB: [12, 60], ...extra});
+export const sit = (extra: Pose = {}): Pose => ({drop: 24, legF: [86, 84], legB: [80, 82], lean: 3, armF: [18, 62], armB: [12, 60], ...extra});
 
 // ───────────────────────── S3-A · Sven allein im Büro ─────────────────────────
 
@@ -246,7 +262,7 @@ export const SvenBuero: React.FC<PlaceholderProps> = ({frame, duration}) => {
 
 // ───────────────────────── S4 · Buchhaltung ─────────────────────────
 
-const Wandkalender: React.FC<{x: number; y: number}> = ({x, y}) => (
+export const Wandkalender: React.FC<{x: number; y: number}> = ({x, y}) => (
   <g transform={`translate(${x} ${y})`}>
     <rect x={0} y={0} width={132} height={168} rx={5} fill="#c8d0d7" opacity={0.9} />
     <rect x={0} y={0} width={132} height={40} rx={5} fill="#a8352b" />
@@ -259,7 +275,18 @@ const Wandkalender: React.FC<{x: number; y: number}> = ({x, y}) => (
   </g>
 );
 
-const BuchhaltungRaum: React.FC<{pose: Pose; chairTilt?: number; monitor?: number}> = ({pose, chairTilt = 0, monitor = 1}) => {
+export const BuchhaltungRaum: React.FC<{
+  pose: Pose;
+  chairTilt?: number;
+  monitor?: number;
+  /** Farbe des Bildschirmlichts (z. B. grünlich nach erfolgreicher Freigabe). */
+  monitorFarbe?: string;
+  /** Tageslicht durchs Fenster 0–1. */
+  fenster?: number;
+  fensterFarbe?: string;
+  /** Weitere Figuren hinter dem Schreibtisch (z. B. Sven, der dazukommt). */
+  hinten?: React.ReactNode;
+}> = ({pose, chairTilt = 0, monitor = 1, monitorFarbe, fenster = 0.5, fensterFarbe, hinten}) => {
   const fig = {x: 986, y: FLOOR, height: 474, facing: 1 as const, pose};
   return (
     <>
@@ -274,17 +301,18 @@ const BuchhaltungRaum: React.FC<{pose: Pose; chairTilt?: number; monitor?: numbe
         </mask>
       </defs>
       <Raum id="bh" top="#1a222b" bottom="#10171e" />
-      <Fenster id="bh" x={90} y={200} w={400} h={400} strength={0.5} />
+      <Fenster id="bh" x={90} y={200} w={400} h={400} strength={fenster} color={fensterFarbe} />
       <Wandkalender x={620} y={270} />
       <Ordnerregal x={1420} y={236} w={420} rows={3} seed="bh" />
-      <MonitorSchein id="bh" x={1280} y={708} on={monitor} />
+      <MonitorSchein id="bh" x={1280} y={708} on={monitor} farbe={monitorFarbe} />
+      {hinten}
       <Stuhl x={972} seat={112} tilt={chairTilt} />
       <Figure {...fig} hat="long" {...DARK} rim={COOL_RIM} />
       <g mask="url(#bhMask)" opacity={0.6 * monitor}>
         <Figure {...fig} hat="long" color="#31465c" backColor="#1c2937" />
       </g>
       <Tisch x={760} y={708} w={720} />
-      <Monitor x={1280} y={708} on={monitor} />
+      <Monitor x={1280} y={708} on={monitor} farbe={monitorFarbe} />
       {/* Tastatur, Unterlagen, Ordner, Tasse */}
       <rect x={1090} y={700} width={130} height={8} rx={3} fill="#0b1015" />
       <Papierstapel x={786} y={708} n={7} seed="bh1" />
@@ -295,7 +323,7 @@ const BuchhaltungRaum: React.FC<{pose: Pose; chairTilt?: number; monitor?: numbe
   );
 };
 
-const typing = (frame: number): Pose =>
+export const typing = (frame: number): Pose =>
   sit({
     lean: 7,
     head: 8,
@@ -365,7 +393,7 @@ export const Vertrieb: React.FC<PlaceholderProps> = ({frame, duration}) => {
 
 // ───────────────────────── S5-B / S6-A · Das leere Chefbüro ─────────────────────────
 
-const Wanduhr: React.FC<{x: number; y: number; hour: number; minute: number; second: number}> = ({x, y, hour, minute, second}) => (
+export const Wanduhr: React.FC<{x: number; y: number; hour: number; minute: number; second: number}> = ({x, y, hour, minute, second}) => (
   <g transform={`translate(${x} ${y})`}>
     <circle r={62} fill="#0b1016" />
     <circle r={54} fill="#c6ced6" opacity={0.86} />
@@ -379,23 +407,60 @@ const Wanduhr: React.FC<{x: number; y: number; hour: number; minute: number; sec
   </g>
 );
 
-const Chefbuero: React.FC<{frame: number; minute: number}> = ({frame, minute}) => {
+/** Der Notfallordner von vorn (Ursprung: Mitte der Unterkante). */
+export const Ordner: React.FC<{x: number; y: number; scale?: number; rotate?: number}> = ({x, y, scale = 1, rotate = 0}) => (
+  <g transform={`translate(${x} ${y}) rotate(${rotate}) scale(${scale})`}>
+    <rect x={-70} y={-156} width={140} height={156} rx={4} fill="#d9541e" />
+    <rect x={-70} y={-156} width={18} height={156} rx={4} fill="#b03f14" />
+    <circle cx={-61} cy={-28} r={5} fill="#0d1218" />
+    <rect x={-44} y={-132} width={102} height={54} rx={3} fill="#f3efe6" />
+    <text x={7} y={-109} textAnchor="middle" fontFamily={UI_FONT} fontSize={15.5} fontWeight={800} letterSpacing={1.1} fill="#1a2028">
+      NOTFALL-
+    </text>
+    <text x={7} y={-90} textAnchor="middle" fontFamily={UI_FONT} fontSize={15.5} fontWeight={800} letterSpacing={1.1} fill="#1a2028">
+      ORDNER
+    </text>
+    <rect x={-70} y={-156} width={140} height={5} rx={2} fill="#fff" opacity={0.16} />
+  </g>
+);
+
+export const Chefbuero: React.FC<{
+  frame: number;
+  minute: number;
+  /** 0 = kaltes Morgenlicht (Film 1), 1 = warmes Sonnenlicht. */
+  warm?: number;
+  /** Notfallordner steht auf dem Schreibtisch. */
+  ordner?: boolean;
+  /** Verpasste Anrufe: Lampe am Telefon blinkt. */
+  anrufe?: boolean;
+  /** Tresor im Sideboard: undefined = keiner sichtbar, 0–1 = Tür geschlossen bis offen. */
+  tresor?: number;
+  /** Ordner liegt noch im Tresor. */
+  ordnerImTresor?: boolean;
+}> = ({frame, minute, warm = 0, ordner = false, anrufe = true, tresor, ordnerImTresor = false}) => {
   const second = Math.floor(frame / 30) + 12;
-  const led = Math.floor(frame / 12) % 2 === 0 ? 1 : 0.15;
+  const led = anrufe ? (Math.floor(frame / 12) % 2 === 0 ? 1 : 0.15) : 0;
+  const stripeColor = warm > 0.5 ? '#ffd7a0' : warm > 0 ? '#e6d2bc' : '#b9cee2';
+  const stripeA = 0.085 + 0.14 * warm;
   return (
     <>
       <defs>
         <linearGradient id="cbStripe" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor="#b9cee2" stopOpacity={0.085} />
-          <stop offset="1" stopColor="#b9cee2" stopOpacity={0.02} />
+          <stop offset="0" stopColor={stripeColor} stopOpacity={stripeA} />
+          <stop offset="1" stopColor={stripeColor} stopOpacity={0.02 + 0.03 * warm} />
         </linearGradient>
+        <radialGradient id="cbOrdnerLicht">
+          <stop offset="0" stopColor="#ffd9a0" stopOpacity={0.2} />
+          <stop offset="0.5" stopColor="#ffd9a0" stopOpacity={0.07} />
+          <stop offset="1" stopColor="#ffd9a0" stopOpacity={0} />
+        </radialGradient>
         <linearGradient id="cbChair" x1="0" y1="0" x2="1" y2="0">
           <stop offset="0" stopColor="#141c24" />
           <stop offset="0.55" stopColor="#2b3743" />
           <stop offset="1" stopColor="#18212a" />
         </linearGradient>
       </defs>
-      <Raum id="cb" top="#161e27" bottom="#0d141b" floor="#080c10" />
+      <Raum id="cb" top={warm > 0.5 ? '#2b2c2c' : warm > 0 ? '#1e242a' : '#161e27'} bottom={warm > 0.5 ? '#191a1b' : warm > 0 ? '#11171c' : '#0d141b'} floor="#080c10" />
       {/* Lichtstreifen der Lamellen an der Wand */}
       {Array.from({length: 9}, (_, i) => {
         const sx = 1040 + i * 104 + 6 * Math.sin(frame / 90);
@@ -405,6 +470,27 @@ const Chefbuero: React.FC<{frame: number; minute: number}> = ({frame, minute}) =
       <rect x={150} y={640} width={420} height={260} fill="#0f161d" />
       <rect x={150} y={640} width={420} height={10} fill="#1a232c" />
       <line x1={360} y1={654} x2={360} y2={900} stroke="#0a0f14" strokeWidth={4} />
+      {tresor !== undefined ? (
+        <g>
+          {/* Tresor im linken Fach */}
+          <rect x={172} y={672} width={170} height={210} rx={6} fill="#05080b" />
+          {ordnerImTresor ? (
+            <g>
+              <rect x={196} y={724} width={36} height={150} rx={3} fill="#d9541e" />
+              <rect x={202} y={742} width={24} height={62} rx={2} fill="#f3efe6" />
+              <circle cx={214} cy={850} r={5} fill="#0d1218" />
+              <rect x={240} y={748} width={22} height={126} rx={2} fill="#2c3540" />
+              <rect x={268} y={760} width={18} height={114} rx={2} fill="#243039" />
+            </g>
+          ) : null}
+          <g transform={`translate(172 0) scale(${1 - 0.86 * tresor} 1) translate(-172 0)`}>
+            <rect x={172} y={672} width={170} height={210} rx={6} fill="#2a343e" stroke="#4a5764" strokeWidth={3} />
+            <circle cx={298} cy={777} r={20} fill="none" stroke="#7d8b98" strokeWidth={5} />
+            <path d="M298 757v40M278 777h40" stroke="#7d8b98" strokeWidth={4} />
+            <rect x={196} y={700} width={46} height={30} rx={3} fill="#10161c" />
+          </g>
+        </g>
+      ) : null}
       <rect x={210} y={330} width={250} height={180} fill="#0b1016" stroke="#27323c" strokeWidth={6} />
       <path d="M222 498 L300 410 L350 460 L400 390 L448 498Z" fill="#1c2732" />
       <Wanduhr x={700} y={348} hour={9} minute={minute} second={second} />
@@ -439,6 +525,12 @@ const Chefbuero: React.FC<{frame: number; minute: number}> = ({frame, minute}) =
         </text>
       </g>
       <Tischtelefon x={1370} y={692} scale={0.86} led={led} display={0.5} />
+      {ordner ? (
+        <g>
+          <ellipse cx={836} cy={606} rx={300} ry={230} fill="url(#cbOrdnerLicht)" />
+          <Ordner x={836} y={690} rotate={-3} />
+        </g>
+      ) : null}
 
       {/* Staub im Licht */}
       {Array.from({length: 22}, (_, i) => {
@@ -471,11 +563,163 @@ export const ChefbueroLeer: React.FC<PlaceholderProps> = ({frame, duration}) => 
   );
 };
 
-// ───────────────────────── S5-C · Produktion steht ─────────────────────────
+// ───────────────────────── S5-C · Produktionshalle ─────────────────────────
 
+/**
+ * Die Halle mit der großen Maschine.
+ * laeuft = false: Stillstand, Rot/Gelb, leere Palette (Film 1).
+ * laeuft = true:  Maschine arbeitet, Grün, Licht im Arbeitsraum, Material auf der Palette (Film 2).
+ */
+export const Halle: React.FC<{frame: number; laeuft: boolean; children?: React.ReactNode}> = ({frame, laeuft, children}) => {
+  const amber = Math.floor(frame / 15) % 2 === 0 ? 1 : 0.12;
+  // leichtes Vibrieren der laufenden Maschine
+  const shake = laeuft ? Math.sin(frame * 2.3) * 0.7 : 0;
+  // Werkzeugschlitten fährt im Arbeitsraum hin und her
+  const slide = 1140 + 150 * (0.5 + 0.5 * Math.sin(frame / 14));
+  return (
+    <>
+      <defs>
+        <linearGradient id="prLamp" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor="#cfe0f2" stopOpacity={laeuft ? 0.24 : 0.16} />
+          <stop offset="1" stopColor="#cfe0f2" stopOpacity={0.01} />
+        </linearGradient>
+        <radialGradient id="prRed">
+          <stop offset="0" stopColor="#ff4a3a" stopOpacity={0.55} />
+          <stop offset="1" stopColor="#ff4a3a" stopOpacity={0} />
+        </radialGradient>
+        <radialGradient id="prAmber">
+          <stop offset="0" stopColor="#ffb02e" stopOpacity={0.5} />
+          <stop offset="1" stopColor="#ffb02e" stopOpacity={0} />
+        </radialGradient>
+        <radialGradient id="prGreen">
+          <stop offset="0" stopColor="#4fe07a" stopOpacity={0.5} />
+          <stop offset="1" stopColor="#4fe07a" stopOpacity={0} />
+        </radialGradient>
+        <radialGradient id="prWork">
+          <stop offset="0" stopColor="#eaf4ff" stopOpacity={0.75} />
+          <stop offset="0.6" stopColor="#9fc4e8" stopOpacity={0.3} />
+          <stop offset="1" stopColor="#9fc4e8" stopOpacity={0.08} />
+        </radialGradient>
+        <clipPath id="prWindow">
+          <rect x={1060} y={444} width={350} height={300} rx={10} />
+        </clipPath>
+      </defs>
+      <Raum id="pr" top={laeuft ? '#1b2530' : '#141c25'} bottom={laeuft ? '#121a22' : '#0e151c'} floor="#0a0e13" />
+      {/* Fensterband und Dachträger */}
+      {Array.from({length: 8}, (_, i) => (
+        <rect key={i} x={-120 + i * 290} y={70} width={230} height={120} fill={laeuft ? '#c9dbea' : '#9db8d2'} opacity={laeuft ? 0.42 : 0.2} />
+      ))}
+      {Array.from({length: 9}, (_, i) => (
+        <path key={i} d={`M${-200 + i * 290} 40 L${-55 + i * 290} 240 L${90 + i * 290} 40`} fill="none" stroke="#0a0f15" strokeWidth={12} />
+      ))}
+      <rect x={-300} y={234} width={2600} height={16} fill="#0a0f15" />
+      {[360, 1010, 1660].map((x) => (
+        <g key={x}>
+          <line x1={x} y1={250} x2={x} y2={316} stroke="#0a0f15" strokeWidth={5} />
+          <path d={`M${x - 36} 334 L${x - 20} 314 L${x + 20} 314 L${x + 36} 334Z`} fill={laeuft ? '#dfeaf4' : '#1b242d'} />
+          <path d={`M${x - 34} 334 L${x - 300} ${FLOOR} L${x + 300} ${FLOOR} L${x + 34} 334Z`} fill="url(#prLamp)" />
+        </g>
+      ))}
+      {/* Bodenmarkierung */}
+      <path d={`M-200 ${FLOOR + 60} L2200 ${FLOOR + 60}`} stroke="#c9a23a" strokeOpacity={laeuft ? 0.45 : 0.3} strokeWidth={10} />
+      {/* Palette: leer (Material fehlt) oder beladen */}
+      <g fill="#2a2f33">
+        <rect x={150} y={FLOOR - 16} width={250} height={10} />
+        <rect x={150} y={FLOOR - 38} width={250} height={10} />
+        {[154, 262, 372].map((x) => (
+          <rect key={x} x={x} y={FLOOR - 30} width={24} height={16} />
+        ))}
+      </g>
+      {laeuft ? (
+        <g>
+          {[
+            [160, 74, 112, 70],
+            [276, 74, 112, 70],
+            [172, 146, 100, 68],
+            [278, 142, 104, 64],
+            [224, 212, 104, 62],
+          ].map(([x, up, w, h], i) => (
+            <g key={i}>
+              <rect x={x} y={FLOOR - 38 - up} width={w} height={h} fill={i % 2 ? '#3a3f43' : '#33383c'} />
+              <rect x={x} y={FLOOR - 38 - up} width={w} height={5} fill="#fff" opacity={0.06} />
+              <rect x={x + w / 2 - 6} y={FLOOR - 38 - up} width={12} height={h} fill="#000" opacity={0.18} />
+            </g>
+          ))}
+        </g>
+      ) : null}
+      {/* Maschine */}
+      <g transform={`translate(${shake} 0)`}>
+        <rect x={1010} y={372} width={700} height={FLOOR - 372} rx={18} fill={laeuft ? '#1f2b36' : '#19232d'} />
+        <rect x={1010} y={372} width={700} height={12} rx={6} fill="#fff" opacity={0.05} />
+        <rect x={1010} y={FLOOR - 70} width={700} height={70} fill="#121a22" />
+        <rect x={1060} y={444} width={350} height={300} rx={10} fill="#070b10" />
+        {laeuft ? (
+          <g clipPath="url(#prWindow)">
+            <rect x={1060} y={444} width={350} height={300} fill="url(#prWork)" />
+            {/* Werkzeugschlitten und Werkstück */}
+            <rect x={1090} y={676} width={290} height={40} fill="#1a232c" />
+            <rect x={1170} y={640} width={130} height={36} fill="#55616d" />
+            <rect x={slide - 34} y={444} width={68} height={120} fill="#27323c" />
+            <rect x={slide - 9} y={560} width={18} height={76} fill="#8a97a3" />
+            {/* Funken und Kühlmittel am Werkzeug */}
+            {Array.from({length: 9}, (_, i) => {
+              const life = (frame * 0.9 + i * 3.7) % 9;
+              const a = rnd(`sp${i}-${Math.floor((frame + i * 4) / 9)}`) * Math.PI;
+              return (
+                <circle
+                  key={i}
+                  cx={slide + Math.cos(a) * life * 9}
+                  cy={640 - Math.sin(a) * life * 5 + life * life * 0.5}
+                  r={2.4}
+                  fill="#ffe2a8"
+                  opacity={1 - life / 9}
+                />
+              );
+            })}
+          </g>
+        ) : null}
+        <rect x={1060} y={444} width={350} height={300} rx={10} fill="none" stroke="#2a3642" strokeWidth={8} />
+        <path d="M1084 468l90 0-110 210 0-150z" fill="#fff" opacity={laeuft ? 0.06 : 0.03} />
+        <rect x={1228} y={560} width={12} height={90} rx={6} fill="#3b4854" opacity={laeuft ? 0 : 1} />
+        {/* Bedienpult */}
+        <rect x={1470} y={470} width={190} height={250} rx={10} fill="#111920" />
+        <rect x={1490} y={490} width={150} height={96} rx={4} fill={laeuft ? '#0f2a33' : '#06090d'} />
+        {laeuft ? (
+          <g>
+            <rect x={1500} y={500} width={130} height={14} rx={3} fill="#4fe07a" opacity={0.85} />
+            {[0, 1, 2].map((i) => (
+              <rect key={i} x={1500} y={526 + i * 18} width={70 + ((frame * 2 + i * 37) % 60)} height={8} rx={2} fill="#9fd3e6" opacity={0.6} />
+            ))}
+          </g>
+        ) : (
+          <rect x={1500} y={500} width={130} height={14} rx={3} fill="#ff4a3a" opacity={0.7} />
+        )}
+        {[0, 1, 2, 3].map((i) => (
+          <circle key={i} cx={1502 + i * 42} cy={624} r={11} fill={laeuft ? (i === 1 ? '#2f8a4c' : '#27313b') : i === 0 ? '#7a241d' : '#27313b'} />
+        ))}
+        <circle cx={1565} cy={680} r={20} fill="#8a251c" />
+        {/* Signalsäule */}
+        <rect x={1612} y={300} width={12} height={72} fill="#0a0f15" />
+        <rect x={1600} y={268} width={36} height={32} rx={4} fill={laeuft ? '#4fe07a' : '#3d7a48'} opacity={laeuft ? 1 : 0.25} />
+        <rect x={1600} y={236} width={36} height={32} rx={4} fill="#ffb02e" opacity={laeuft ? 0.16 : 0.2 + 0.8 * amber} />
+        <rect x={1600} y={204} width={36} height={32} rx={4} fill="#ff4a3a" opacity={laeuft ? 0.16 : 1} />
+        {laeuft ? (
+          <circle cx={1618} cy={284} r={120} fill="url(#prGreen)" />
+        ) : (
+          <>
+            <circle cx={1618} cy={220} r={110} fill="url(#prRed)" />
+            <circle cx={1618} cy={252} r={90} fill="url(#prAmber)" opacity={amber} />
+          </>
+        )}
+      </g>
+      {children}
+    </>
+  );
+};
+
+/** S5-C (Film 1): Mitarbeiter stehen vor der stillstehenden Maschine. */
 export const Produktion: React.FC<PlaceholderProps> = ({frame, duration}) => {
   const cam = lin(frame, 0, duration);
-  const amber = Math.floor(frame / 15) % 2 === 0 ? 1 : 0.12;
   const crossed: Pose = {lean: 1, head: 6, armF: [34, 108], armB: [30, 100], legF: [5, 2], legB: [-6, 2]};
   const hips: Pose = {lean: 0, head: 4, armF: [-24, 78], armB: [-30, 80], legF: [8, 2], legB: [-8, 2]};
   const neck: Pose = {lean: 2, head: 16, armF: [150, 150], armB: [4, 12], legF: [4, 2], legB: [-5, 2]};
@@ -487,72 +731,11 @@ export const Produktion: React.FC<PlaceholderProps> = ({frame, duration}) => {
   ];
   return (
     <Scene frame={frame} background="#090d12" camera={{scale: 1.04 + 0.04 * cam, x: lerp(30, -30, cam), pivot: [1000, 620]}}>
-      <defs>
-        <linearGradient id="prLamp" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor="#cfe0f2" stopOpacity={0.16} />
-          <stop offset="1" stopColor="#cfe0f2" stopOpacity={0.01} />
-        </linearGradient>
-        <radialGradient id="prRed">
-          <stop offset="0" stopColor="#ff4a3a" stopOpacity={0.55} />
-          <stop offset="1" stopColor="#ff4a3a" stopOpacity={0} />
-        </radialGradient>
-        <radialGradient id="prAmber">
-          <stop offset="0" stopColor="#ffb02e" stopOpacity={0.5} />
-          <stop offset="1" stopColor="#ffb02e" stopOpacity={0} />
-        </radialGradient>
-      </defs>
-      <Raum id="pr" top="#141c25" bottom="#0e151c" floor="#0a0e13" />
-      {/* Fensterband und Dachträger */}
-      {Array.from({length: 8}, (_, i) => (
-        <rect key={i} x={-120 + i * 290} y={70} width={230} height={120} fill="#9db8d2" opacity={0.2} />
-      ))}
-      {Array.from({length: 9}, (_, i) => (
-        <path key={i} d={`M${-200 + i * 290} 40 L${-55 + i * 290} 240 L${90 + i * 290} 40`} fill="none" stroke="#0a0f15" strokeWidth={12} />
-      ))}
-      <rect x={-300} y={234} width={2600} height={16} fill="#0a0f15" />
-      {[360, 1010, 1660].map((x) => (
-        <g key={x}>
-          <line x1={x} y1={250} x2={x} y2={316} stroke="#0a0f15" strokeWidth={5} />
-          <path d={`M${x - 36} 334 L${x - 20} 314 L${x + 20} 314 L${x + 36} 334Z`} fill="#1b242d" />
-          <path d={`M${x - 34} 334 L${x - 300} ${FLOOR} L${x + 300} ${FLOOR} L${x + 34} 334Z`} fill="url(#prLamp)" />
-        </g>
-      ))}
-      {/* Bodenmarkierung */}
-      <path d={`M-200 ${FLOOR + 60} L2200 ${FLOOR + 60}`} stroke="#c9a23a" strokeOpacity={0.3} strokeWidth={10} />
-      {/* leere Palette: das Material fehlt */}
-      <g fill="#2a2f33">
-        <rect x={150} y={FLOOR - 16} width={250} height={10} />
-        <rect x={150} y={FLOOR - 38} width={250} height={10} />
-        {[154, 262, 372].map((x) => (
-          <rect key={x} x={x} y={FLOOR - 30} width={24} height={16} />
+      <Halle frame={frame} laeuft={false}>
+        {workers.map(([x, h, pose, hat], i) => (
+          <Figure key={i} x={x} y={FLOOR + i * 5} height={h} pose={{...pose, lean: (pose.lean ?? 0) + sway(i)}} hat={hat} {...DARK} rim={COOL_RIM} />
         ))}
-      </g>
-      {/* Maschine */}
-      <rect x={1010} y={372} width={700} height={FLOOR - 372} rx={18} fill="#19232d" />
-      <rect x={1010} y={372} width={700} height={12} rx={6} fill="#fff" opacity={0.05} />
-      <rect x={1010} y={FLOOR - 70} width={700} height={70} fill="#121a22" />
-      <rect x={1060} y={444} width={350} height={300} rx={10} fill="#070b10" stroke="#2a3642" strokeWidth={8} />
-      <path d="M1084 468l90 0-110 210 0-150z" fill="#fff" opacity={0.03} />
-      <rect x={1228} y={560} width={12} height={90} rx={6} fill="#3b4854" />
-      {/* Bedienpult: Bildschirm dunkel, eine rote Störlampe */}
-      <rect x={1470} y={470} width={190} height={250} rx={10} fill="#111920" />
-      <rect x={1490} y={490} width={150} height={96} rx={4} fill="#06090d" />
-      <rect x={1500} y={500} width={130} height={14} rx={3} fill="#ff4a3a" opacity={0.7} />
-      {[0, 1, 2, 3].map((i) => (
-        <circle key={i} cx={1502 + i * 42} cy={624} r={11} fill={i === 0 ? '#7a241d' : '#27313b'} />
-      ))}
-      <circle cx={1565} cy={680} r={20} fill="#8a251c" />
-      {/* Signalsäule: Rot leuchtet, Gelb blinkt */}
-      <rect x={1612} y={300} width={12} height={72} fill="#0a0f15" />
-      <rect x={1600} y={268} width={36} height={32} rx={4} fill="#3d7a48" opacity={0.25} />
-      <rect x={1600} y={236} width={36} height={32} rx={4} fill="#ffb02e" opacity={0.2 + 0.8 * amber} />
-      <rect x={1600} y={204} width={36} height={32} rx={4} fill="#ff4a3a" />
-      <circle cx={1618} cy={220} r={110} fill="url(#prRed)" />
-      <circle cx={1618} cy={252} r={90} fill="url(#prAmber)" opacity={amber} />
-      {/* Mitarbeiter stehen davor */}
-      {workers.map(([x, h, pose, hat], i) => (
-        <Figure key={i} x={x} y={FLOOR + i * 5} height={h} pose={{...pose, lean: (pose.lean ?? 0) + sway(i)}} hat={hat} {...DARK} rim={COOL_RIM} />
-      ))}
+      </Halle>
     </Scene>
   );
 };

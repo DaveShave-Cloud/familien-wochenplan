@@ -26,7 +26,7 @@ Länge 3:45.0 · 1920×1080 · 30 fps · 6750 Frames
 | 18 | 2:42.0–3:09.0 | 27,0 s | Chat „Nordwerk Team“ | 2:44.0 **Tobias:** „Für die neue Produktionsplanung brauche ich den Adminzugang zur Software. Der liegt bei Thomas.“<br>2:50.8 **Sven:** „Gibt es dafür keinen Ersatz?“<br>2:53.7 **Tobias:** „Nicht, dass ich wüsste.“<br>2:57.0 **Julia:** „Sven, bist du jetzt eigentlich offiziell für Thomas zuständig?“<br>3:03.6 **Sven:** „Für den Betrieb schon irgendwie. Aber ich habe keine Ahnung, was ich rechtlich überhaupt entscheiden darf.“ |
 | 19 | 3:09.0–3:17.0 | 8,0 s | Film S6-A | **Das leere Chefbüro** – Langsame Kamerafahrt auf den leeren Chefsessel. Jacke über der Lehne, Kaffeetasse, Telefon blinkt. Niemand da. _(Ersatzsequenz)_ |
 | 20 | 3:17.0–3:40.2 | 23,2 s | Chat „Nordwerk Team“ | 3:17.9 **Markus:** „Was machen wir denn jetzt mit der Produktion?“<br>3:21.5 **Katja:** „Und mit den Löhnen?“<br>3:24.0 **Julia:** „Ich brauche jetzt eine Entscheidung für den Kunden.“<br>3:27.6 **Sven:** „Hat Thomas irgendwo aufgeschrieben, wer was übernehmen soll?“<br>3:35.6 **Markus:** „Hat eigentlich irgendjemand einen Plan?“ |
-| 21 | 3:40.2–3:45.0 | 4,8 s | Schwarz | Schwarzbild, vollständige Stille. Kein Abspann. |
+| 21 | 3:40.2–3:45.0 | 4,8 s | Schwarz | Schwarzbild. Kein Abspann. |
 
 **Verhältnis:** Chat 160,2 s (71 %) · Filmszenen 60,0 s (27 %) · Schwarz 4,8 s
 

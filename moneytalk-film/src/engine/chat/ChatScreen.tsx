@@ -15,6 +15,8 @@ const graphemes = (text: string): string[] =>
 const APPEAR_FRAMES = 8;
 /** Nach so vielen Frames wird aus „gesendet“ (ein Haken) „zugestellt“ (zwei Haken). */
 const DELIVERED_AFTER = 20;
+/** In Direktchats werden die Haken danach blau („gelesen“). In Gruppen bleiben sie grau, solange nicht alle gelesen haben. */
+const READ_AFTER = 62;
 
 export interface ChatScreenProps {
   film: CompiledFilm;
@@ -62,10 +64,17 @@ export const ChatScreen: React.FC<ChatScreenProps> = ({film, chatId, owner, fram
 
   const visible = feed.filter((item) => item.frame <= frame);
 
+  // Direktchat: Sobald das Gegenüber in diesem Film einmal getippt hat, gilt es als „online“.
+  const peerActive =
+    !group &&
+    feed.some((item) => item.type === 'message' && !item.outgoing && (item.cue?.typing ?? []).some(([a]) => a <= frame));
+
   // ── Kopfzeile ──
   const memberLine = group
     ? [...chat.members.filter((m) => m !== owner).map((m) => world.characters[m].name), 'Du'].join(', ')
-    : (chat.subtitle ?? 'online');
+    : peerActive
+      ? 'online'
+      : (chat.subtitle ?? 'online');
   const typingLine =
     typists.length > 0
       ? group
@@ -234,6 +243,7 @@ const FeedRow: React.FC<{item: FeedItem; frame: number; theme: ChatTheme; film: 
         avatar={sender.avatar}
         appear={progress}
         delivered={age >= DELIVERED_AFTER}
+        read={!group && age >= READ_AFTER}
       />
     </GrowRow>
   );

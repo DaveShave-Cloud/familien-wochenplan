@@ -78,7 +78,7 @@ export interface FilmScript {
 
 // ───────────────────────── Zeitablauf ─────────────────────────
 
-export type BackdropId = 'nacht' | 'morgen' | 'buero' | 'druck';
+export type BackdropId = 'nacht' | 'morgen' | 'buero' | 'druck' | 'tag' | 'zuversicht';
 
 export interface ChatShotDef {
   kind: 'chat';
@@ -200,6 +200,8 @@ export interface SfxCue {
   at: Timecode;
   file: string;
   volume?: number;
+  /** Nur so viele Sekunden abspielen (Standard: ganze Datei). */
+  duration?: number;
   /** Gehört zur Ersatzsequenz dieses Slots (entfällt, wenn Realfilm mit Ton kommt). */
   slot?: string;
 }

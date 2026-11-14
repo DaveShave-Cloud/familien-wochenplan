@@ -23,11 +23,11 @@ Einsetzen: Datei nach `public/footage/` legen und in `src/films/film1/cutscenes.
 | S5-C | 2:38.4–2:42.0 | 3,6 s | Produktion steht | Produktionshalle. Mitarbeiter stehen vor einer stillstehenden Maschine, Warnleuchte gelb/rot. Keiner arbeitet. | Ersatzsequenz |
 | S6-A | 3:09.0–3:17.0 | 8,0 s | Das leere Chefbüro | Langsame Kamerafahrt auf den leeren Chefsessel. Jacke über der Lehne, Kaffeetasse, Telefon blinkt. Niemand da. | Ersatzsequenz |
 
-Hinweise für den Dreh: dieselben Darsteller und Schauplätze werden in Film 2 („Gut, dass wir vorbereitet sind“) wieder gebraucht – am besten beide Fassungen an einem Drehtag aufnehmen. Kein lesbarer Fremdtext, keine fremden Marken im Bild.
+Hinweise für den Dreh: Beide Filme spielen am selben Tag an denselben Schauplätzen mit denselben Darstellern – am besten gemeinsam drehen. Kein lesbarer Fremdtext, keine fremden Marken im Bild.
 
 ## 2. Profilbilder
 
-Derzeit gezeichnete Platzhalter. Benötigt: quadratisches Foto je Figur (mind. 400×400 px, Gesicht mittig), abgelegt in `public/avatars/`, eingetragen in `src/world/nordwerk.ts`.
+Derzeit gezeichnete Platzhalter. Benötigt: quadratisches Foto je Figur (mind. 400×400 px, Gesicht mittig), abgelegt in `public/avatars/`, eingetragen in `src/world/nordwerk.ts` (gilt für beide Filme).
 
 | Figur | Rolle | Im Chat sichtbar | Status |
 |---|---|---|---|

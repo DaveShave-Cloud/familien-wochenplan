@@ -55,8 +55,8 @@ export const SoundDesign: React.FC<{film: CompiledFilm}> = ({film}) => {
   /** Geräusche einer Ersatzsequenz entfallen, wenn dort ein Realfilm mit Ton liegt. */
   const foleyActive = (slotPrefix?: string): boolean => {
     if (!slotPrefix) return true;
-    return !Object.values(def.cutscenes).some(
-      (s) => s.id.startsWith(slotPrefix) && s.clip && (s.clip.volume ?? 0) > 0 && !s.clip.keepFoley,
+    return !Object.entries(def.cutscenes).some(
+      ([key, s]) => key.startsWith(slotPrefix) && s.clip && (s.clip.volume ?? 0) > 0 && !s.clip.keepFoley,
     );
   };
 
@@ -71,7 +71,13 @@ export const SoundDesign: React.FC<{film: CompiledFilm}> = ({film}) => {
       ))}
 
       {sound.sfx.filter((s) => foleyActive(s.slot)).map((s, i) => (
-        <Sequence key={`sfx-${i}`} from={toFrame(s.at, fps)} layout="none" name={`Geräusch ${s.file}`}>
+        <Sequence
+          key={`sfx-${i}`}
+          from={toFrame(s.at, fps)}
+          durationInFrames={s.duration ? Math.max(1, Math.round(s.duration * fps)) : undefined}
+          layout="none"
+          name={`Geräusch ${s.file}`}
+        >
           <Audio src={staticFile(s.file)} volume={s.volume ?? 1} />
         </Sequence>
       ))}

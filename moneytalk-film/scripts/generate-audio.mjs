@@ -14,7 +14,7 @@ const OUT = join(dirname(fileURLToPath(import.meta.url)), '..', 'public', 'audio
 mkdirSync(OUT, {recursive: true});
 
 // --if-missing: nur erzeugen, wenn noch keine Töne vorhanden sind (Aufruf vor dem Rendern)
-if (process.argv.includes('--if-missing') && existsSync(join(OUT, 'msg_in.wav')) && existsSync(join(OUT, 'music_riser.wav'))) {
+if (process.argv.includes('--if-missing') && existsSync(join(OUT, 'msg_in.wav')) && existsSync(join(OUT, 'music_riser.wav')) && existsSync(join(OUT, 'music2_final.wav'))) {
   process.exit(0);
 }
 
@@ -677,6 +677,233 @@ const musicRiser = () => {
   return edges(reverb(buf, {room: 0.9, damp: 0.4, wet: 0.4}), 0.01, 1.2);
 };
 
+// ───────────────────────── Film 2: Geräusche ─────────────────────────
+
+/** Tresor: Griff, Riegel, schwere Tür schwingt auf. */
+const safeOpen = () => {
+  const buf = stereo(1.7);
+  const rand = rng(50);
+  for (const [at, amp] of [[0.04, 0.5], [0.19, 0.6]]) {
+    ping(buf, at, 1500, 0.006, amp);
+    ping(buf, at, 190, 0.03, amp);
+    burst(buf, at, 2600, 1, 0.012, amp * 0.6, rand);
+  }
+  ping(buf, 0.42, 84, 0.11, 1);
+  ping(buf, 0.42, 236, 0.06, 0.5);
+  ping(buf, 0.42, 610, 0.03, 0.24);
+  burst(buf, 0.42, 1500, 0.8, 0.03, 0.5, rand);
+  const f = svf();
+  for (let i = n(0.6); i < n(1.45); i++) {
+    const t = (i - n(0.6)) / n(0.85);
+    add(buf, i, f(rand() * 2 - 1, 240 + 160 * t, 0.8).lp * Math.sin(Math.PI * t) ** 2 * 0.4);
+  }
+  return edges(reverb(buf, {room: 0.4, damp: 0.5, wet: 0.16}));
+};
+
+/** Ordner wird aufgeschlagen: Papier, dann der Deckel auf der Tischplatte. */
+const paper = () => {
+  const buf = stereo(1.0);
+  const rand = rng(51);
+  const f = svf();
+  for (let i = 0; i < n(0.32); i++) {
+    const t = i / n(0.32);
+    const env = Math.sin(Math.PI * t) ** 1.4 * (0.7 + 0.3 * Math.sin(TAU * 23 * (i / SR)));
+    add(buf, i, f(rand() * 2 - 1, 1500 + 3200 * t, 1.1).bp * env * 0.6, -0.2 + 0.4 * t);
+  }
+  ping(buf, 0.31, 108, 0.06, 0.9);
+  burst(buf, 0.31, 420, 0.7, 0.03, 0.6, rand, 0, 'lp');
+  return edges(reverb(buf, {room: 0.3, damp: 0.6, wet: 0.12}));
+};
+
+/** Kurze, freundliche Bestätigung am Bildschirm. */
+const confirm = () => {
+  const buf = stereo(0.9);
+  for (const [at, f0, amp] of [[0, 880, 0.8], [0.115, 1174.66, 1]]) {
+    const start = n(at);
+    for (let i = 0; i < n(0.5); i++) {
+      const t = i / SR;
+      const env = Math.exp(-t / 0.13) * Math.min(1, t / 0.004);
+      add(buf, start + i, (Math.sin(TAU * f0 * t) + 0.2 * Math.sin(TAU * 2 * f0 * t)) * env * amp);
+    }
+  }
+  return edges(reverb(buf, {room: 0.3, damp: 0.5, wet: 0.14}));
+};
+
+/** Die Maschine arbeitet: Motor, Spindel, rhythmisches Zerspanen (Schleife). */
+const machineRun = () => {
+  const len = 8;
+  const raw = stereo(len + 1.5);
+  const rand = rng(52);
+  const cl = svf();
+  const cr = svf();
+  const al = svf();
+  for (let i = 0; i < raw.L.length; i++) {
+    const t = i / SR;
+    const motor = (Math.sin(TAU * 100 * t) + 0.5 * Math.sin(TAU * 200 * t) + 0.25 * Math.sin(TAU * 300 * t)) * (0.1 + 0.015 * Math.sin(TAU * 6 * t));
+    const whine = Math.sin(TAU * (1340 + 12 * Math.sin(TAU * 0.7 * t)) * t) * 0.012;
+    const beat = (t * 2) % 1;
+    const cut = beat < 0.36 ? Math.sin((beat / 0.36) * Math.PI) ** 0.6 : 0;
+    const air = al(rand() * 2 - 1, 6200, 0.7).hp * 0.012;
+    raw.L[i] = motor + whine + cl(rand() * 2 - 1, 2500, 1.4).bp * cut * 0.2 + air;
+    raw.R[i] = motor + whine * 0.8 + cr(rand() * 2 - 1, 2800, 1.4).bp * cut * 0.2 - air;
+  }
+  return makeLoop(reverb(raw, {room: 0.8, damp: 0.3, wet: 0.3}), len, 1.5);
+};
+
+// ───────────────────────── Film 2: Musik (D-Dur, 16-s-Schleifen: D | h | G | A) ─────────────────────────
+
+const midi = (m) => 440 * Math.pow(2, (m - 69) / 12);
+
+/** Klavierähnlicher Ton: Teiltöne mit eigenem Abklingen, weicher Anschlag. wrap = in die Schleife schreiben. */
+const piano = (buf, at, freq, amp, pan = 0, sustain = 2.4, wrap = false) => {
+  const start = n(at);
+  const len = n(Math.min(sustain * 2.4, 7.5));
+  const parts = [];
+  for (let k = 1; k <= 9; k++) {
+    const f = k * freq * Math.sqrt(1 + 0.00035 * k * k);
+    if (f > 9000) break;
+    parts.push({f, a: Math.pow(k, -1.35), d: sustain / (1 + 0.45 * (k - 1))});
+  }
+  const L = buf.L.length;
+  for (let i = 0; i < len; i++) {
+    const t = i / SR;
+    let v = 0;
+    for (const p of parts) v += Math.sin(TAU * p.f * t) * p.a * Math.exp(-t / p.d);
+    add(buf, wrap ? (start + i) % L : start + i, v * Math.min(1, t / 0.006) * amp * 0.5, pan);
+  }
+};
+
+/** Mehrere leicht verstimmte Sägezähne für eine Fläche. */
+const padVoice = (rand, m, cents = [-7, 0, 6]) => cents.map((c, k) => ({osc: sawOsc(rand()), f: midi(m) * Math.pow(2, c / 1200), pan: (k - 1) * 0.7}));
+const padSample = (oscs) => {
+  let l = 0;
+  let r = 0;
+  for (const o of oscs) {
+    const s = o.osc(o.f);
+    l += s * (0.5 - o.pan * 0.4);
+    r += s * (0.5 + o.pan * 0.4);
+  }
+  return [l, r];
+};
+
+/** Warme Fläche, Akkordwechsel alle vier Sekunden mit weichem Übergang. */
+const musicPad2 = () => {
+  const len = 16;
+  const buf = stereo(len);
+  const rand = rng(40);
+  const chords = [[50, 54, 57, 64], [47, 50, 54, 57], [43, 47, 50, 57], [45, 52, 57, 61]];
+  chords.forEach((notes, bar) => {
+    for (const m of notes) {
+      const oscs = padVoice(rand, m);
+      const fl = svf();
+      const fr = svf();
+      for (let i = 0; i < n(6.2); i++) {
+        const t = i / SR;
+        const e = Math.min(1, t / 1.3) * (t < 4 ? 1 : Math.max(0, 1 - (t - 4) / 2.2));
+        const env = e * e * (3 - 2 * e);
+        const [l, r] = padSample(oscs);
+        const idx = (n(bar * 4) + i) % buf.L.length;
+        buf.L[idx] += fl(l, 600 + 560 * env, 0.7).lp * env * 0.25;
+        buf.R[idx] += fr(r, 640 + 560 * env, 0.7).lp * env * 0.25;
+      }
+    }
+  });
+  return reverb(buf, {room: 0.88, damp: 0.45, wet: 0.4, circular: true});
+};
+
+/** Ruhiges Klaviermotiv: gebrochene Akkorde in Achteln (60 BPM). */
+const musicMotif2 = () => {
+  const len = 16;
+  const buf = stereo(len);
+  const rand = rng(41);
+  const bars = [
+    [62, 69, 78, 69, 74, 69, 78, 69],
+    [59, 66, 74, 66, 71, 66, 74, 66],
+    [55, 62, 71, 62, 67, 62, 71, 62],
+    [57, 64, 73, 64, 69, 64, 73, 64],
+  ];
+  const vel = [1, 0.55, 0.8, 0.5, 0.72, 0.5, 0.8, 0.55];
+  bars.forEach((notes, bar) =>
+    notes.forEach((m, i) => {
+      const at = Math.max(0, bar * 4 + i * 0.5 + (rand() - 0.5) * 0.012);
+      piano(buf, at, midi(m), vel[i] * (0.85 + 0.15 * rand()), i % 2 ? 0.25 : -0.25, 1.9, true);
+    }),
+  );
+  return reverb(buf, {room: 0.8, damp: 0.4, wet: 0.34, circular: true});
+};
+
+/** Bass: ein langer Ton je Takt. */
+const musicBass2 = () => {
+  const len = 16;
+  const buf = stereo(len);
+  [38, 35, 31, 33].forEach((m, bar) => {
+    const f = midi(m);
+    for (let i = 0; i < n(4.6); i++) {
+      const t = i / SR;
+      const env = Math.min(1, t / 0.09) * Math.exp(-t / 2.6) * (t < 4 ? 1 : Math.max(0, 1 - (t - 4) / 0.6));
+      const v = (Math.sin(TAU * f * t) + 0.45 * Math.sin(TAU * 2 * f * t) + 0.12 * Math.sin(TAU * 3 * f * t)) * env;
+      add(buf, (n(bar * 4) + i) % buf.L.length, v);
+    }
+  });
+  return reverb(buf, {room: 0.5, damp: 0.7, wet: 0.1, circular: true});
+};
+
+/** Leichter Achtelpuls auf Akkordtönen: der Betrieb kommt in Bewegung (120 BPM). */
+const musicRhythm2 = () => {
+  const len = 16;
+  const buf = stereo(len);
+  const rand = rng(42);
+  const roots = [50, 47, 43, 45];
+  const thirds = [16, 15, 16, 16];
+  roots.forEach((root, bar) => {
+    const pattern = [0, 7, 12, 7, 0, 7, 12, 7, 0, 7, 12, 7, 0, 7, thirds[bar], 12];
+    pattern.forEach((semi, i) => {
+      const f0 = midi(root + semi);
+      const o1 = sawOsc(rand());
+      const o2 = sawOsc(rand());
+      const flt = svf();
+      const accent = i % 4 === 0 ? 1 : i % 2 === 0 ? 0.7 : 0.5;
+      for (let k = 0; k < n(0.28); k++) {
+        const t = k / SR;
+        const env = Math.exp(-t / 0.07) * Math.min(1, t / 0.003);
+        const v = flt(o1(f0 * 1.003) + o2(f0 * 0.997), 380 + 1700 * accent * Math.exp(-t / 0.05), 1.1).lp * env * accent * 0.5;
+        add(buf, (n(bar * 4 + i * 0.25) + k) % buf.L.length, v, i % 2 ? 0.3 : -0.3);
+      }
+    });
+  });
+  return reverb(buf, {room: 0.6, damp: 0.5, wet: 0.2, circular: true});
+};
+
+/** Schlussakkord D-Dur: aufsteigend angeschlagen, darunter eine Fläche, lang ausklingend. */
+const musicFinal2 = () => {
+  const buf = stereo(9.4);
+  const rand = rng(43);
+  [
+    [50, 0, 1],
+    [57, 0.13, 0.8],
+    [62, 0.26, 0.85],
+    [66, 0.39, 0.8],
+    [69, 0.52, 0.8],
+    [74, 0.66, 0.9],
+    [78, 1.5, 0.5],
+    [81, 2.3, 0.4],
+  ].forEach(([m, at, v], i) => piano(buf, at, midi(m), v, i % 2 ? 0.24 : -0.24, 3.4));
+  for (const m of [38, 50, 57, 62, 66, 69]) {
+    const oscs = padVoice(rand, m, [-6, 0, 7]);
+    const fl = svf();
+    const fr = svf();
+    const gain = m === 38 ? 0.3 : 0.16;
+    for (let i = 0; i < buf.L.length; i++) {
+      const t = i / SR;
+      const env = Math.min(1, t / 1.6) * Math.max(0, Math.min(1, (8.8 - t) / 4.5));
+      const [l, r] = padSample(oscs);
+      buf.L[i] += fl(l, 700 + 500 * env, 0.7).lp * env * gain;
+      buf.R[i] += fr(r, 740 + 500 * env, 0.7).lp * env * gain;
+    }
+  }
+  return edges(reverb(buf, {room: 0.92, damp: 0.4, wet: 0.45}), 0.005, 1.5);
+};
+
 // ───────────────────────── Ausgabe ─────────────────────────
 
 console.log('Erzeuge Töne in public/audio/ …');
@@ -699,4 +926,14 @@ write('music_ostinato.wav', musicOstinato(), -6);
 write('music_tick.wav', musicTick(), -10);
 write('music_strings.wav', musicStrings(), -6);
 write('music_riser.wav', musicRiser(), -4);
+// Film 2
+write('safe_open.wav', safeOpen(), -6);
+write('paper.wav', paper(), -8);
+write('confirm.wav', confirm(), -8);
+write('machine_run.wav', machineRun(), -14);
+write('music2_pad.wav', musicPad2(), -6);
+write('music2_motif.wav', musicMotif2(), -6);
+write('music2_bass.wav', musicBass2(), -6);
+write('music2_rhythm.wav', musicRhythm2(), -8);
+write('music2_final.wav', musicFinal2(), -4);
 console.log('Fertig.');
