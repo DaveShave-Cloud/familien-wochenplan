@@ -1,0 +1,31 @@
+markus|Moin. Stehe vor der Firma. Alles abgeschlossen. Wo ist Thomas?
+julia|Keine Ahnung. Ist sein Auto nicht da?
+markus|Nee. Geht auch nicht ans Handy. 🤷‍♂️
+sven|Hat nicht Dieter einen zweiten Schlüssel?
+markus|Dieter ist auf Mallorca. Zwei Wochen Urlaub. 🏖️
+julia|Ernsthaft? Sonst hat keiner einen?
+markus|Hier stehen mittlerweile acht Leute vor der Tür. Was soll ich denen sagen?
+anna|Sven, ich konnte mich vorher nicht melden. Thomas wurde heute Nacht mit dem Rettungswagen ins Krankenhaus gebracht. Wir wissen noch nicht, wie lange er ausfällt. 😔
+sven|Ich habe gerade mit Anna geschrieben. Thomas ist im Krankenhaus und fällt erst mal auf unbestimmte Zeit aus.
+markus|Oh Scheiße. 😳
+julia|Oh nein. Hoffentlich geht es ihm bald besser. ❤️
+katja|Leute, wir haben noch ein Problem. Heute muss unser Lohnlauf freigegeben werden.
+sven|Kannst du das nicht machen?
+katja|Vorbereiten ja. Freigeben nicht. Die Bankberechtigung hat nur Thomas.
+markus|Heißt das, unsere Gehälter kommen nicht? 😳
+katja|Ich weiß es gerade nicht.
+julia|Unser größter Kunde erwartet um 10 Uhr eine verbindliche Auftragsbestätigung. Wer entscheidet jetzt?
+sven|Ich kenne den Auftrag, aber die endgültigen Konditionen hat Thomas verhandelt.
+markus|Uns fehlt Material für Auftrag 471. Der Lieferant will erst die offene Rechnung geklärt haben.
+julia|Der Kunde ruft schon wieder an. 📞
+katja|Ich kann die Zahlung auch nicht selbst freigeben!
+tobias|Für die neue Produktionsplanung brauche ich den Adminzugang zur Software. Der liegt bei Thomas.
+sven|Gibt es dafür keinen Ersatz?
+tobias|Nicht, dass ich wüsste.
+julia|Sven, bist du jetzt eigentlich offiziell für Thomas zuständig?
+sven|Für den Betrieb schon irgendwie. Aber ich habe keine Ahnung, was ich rechtlich überhaupt entscheiden darf.
+markus|Was machen wir denn jetzt mit der Produktion?
+katja|Und mit den Löhnen?
+julia|Ich brauche jetzt eine Entscheidung für den Kunden.
+sven|Hat Thomas irgendwo aufgeschrieben, wer was übernehmen soll?
+markus|Hat eigentlich irgendjemand einen Plan?

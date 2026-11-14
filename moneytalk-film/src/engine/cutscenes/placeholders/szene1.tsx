@@ -66,12 +66,13 @@ const rattle = (frame: number, start: number, strength: number) => {
 export const EingangMarkus: React.FC<PlaceholderProps> = ({frame, duration}) => {
   const walkT = clamp(frame / 80);
   const walk = 1 - Math.pow(1 - walkT, 1.8);
-  const x = lerp(300, 1128, walk);
+  const x = lerp(300, 1100, walk);
   const walking = 1 - span(frame, 70, 84);
 
-  const reach: Pose = {lean: 3, armF: [72, 14], armB: [-6, 12], legF: [10, 4], legB: [-12, 3]};
-  const pull1: Pose = {lean: -7, armF: [84, 6], armB: [-14, 20], legF: [14, 2], legB: [-16, 8], drop: 1};
-  const pull2: Pose = {lean: -12, armF: [92, 4], armB: [-20, 26], legF: [18, 2], legB: [-20, 12], drop: 2};
+  // Griffhöhe liegt etwas unter der Schulter: Arm leicht nach unten gestreckt
+  const reach: Pose = {lean: 3, armF: [62, 10], armB: [-6, 12], legF: [10, 4], legB: [-12, 3]};
+  const pull1: Pose = {lean: -7, armF: [68, 6], armB: [-14, 20], legF: [14, 2], legB: [-16, 8], drop: 1};
+  const pull2: Pose = {lean: -12, armF: [72, 4], armB: [-20, 26], legF: [18, 2], legB: [-20, 12], drop: 2};
   const give: Pose = {lean: 2, head: 14, armF: [8, 12], armB: [-6, 12], legF: [4, 2], legB: [-6, 2]};
 
   let pose = mixPose(walkPose(frame * 0.215), standPose, 1 - walking);

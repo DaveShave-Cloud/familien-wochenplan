@@ -6,7 +6,7 @@
   "scripts": {
     "studio": "node scripts/generate-audio.mjs --if-missing && remotion studio",
     "audio": "node scripts/generate-audio.mjs",
-    "check": "tsx scripts/check-timing.ts",
+    "check": "tsx scripts/check-timing.ts && tsx scripts/check-script.ts docs/drehbuch-referenz.txt",
     "docs": "tsx scripts/make-docs.ts",
     "typecheck": "tsc --noEmit",
     "render": "bash scripts/render.sh film1",

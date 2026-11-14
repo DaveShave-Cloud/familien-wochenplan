@@ -20,7 +20,7 @@ export const sound: FilmSound = {
     typingVolume: 0.34,
   },
 
-  musicMaster: 1,
+  musicMaster: 0.92,
 
   music: [
     {

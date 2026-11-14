@@ -82,6 +82,7 @@ export const nordwerk: World = {
       title: 'Anna (Thomas’ Frau)',
       members: ['anna', 'sven'],
       avatar: {type: 'portrait', bg: '#c9b79c', skin: '#eac3a4', hair: '#b98a4e', hairStyle: 'long', shirt: '#5b7f8c'},
+      subtitle: 'zuletzt online heute um 06:39',
       notice:
         'Nachrichten und Anrufe sind Ende-zu-Ende-verschlüsselt. Nur die Personen in diesem Chat können sie lesen oder anhören.',
     },
