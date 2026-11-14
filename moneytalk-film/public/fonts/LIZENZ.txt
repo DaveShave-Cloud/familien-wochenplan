@@ -1,0 +1,5 @@
+NotoColorEmoji.ttf
+  Noto Color Emoji, Copyright Google LLC.
+  Schrift: SIL Open Font License 1.1 (https://openfontlicense.org)
+  Quelle: https://github.com/googlefonts/noto-emoji
+  Darf verwendet, eingebettet und weitergegeben werden.

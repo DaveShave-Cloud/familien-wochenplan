@@ -1,0 +1,8 @@
+node_modules/
+out/
+.DS_Store
+*.log
+
+# Töne werden von `npm run audio` erzeugt (automatisch vor dem ersten Rendern).
+# Eigene Aufnahmen, die erhalten bleiben sollen: Zeile unten für diese Datei mit "!" ausnehmen.
+public/audio/*.wav
