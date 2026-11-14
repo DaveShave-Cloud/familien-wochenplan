@@ -5,6 +5,7 @@ import {UI_FONT} from '../fonts';
 import {Grain} from '../stage/Grain';
 import type {CutsceneSlot} from '../types';
 import {TextTafel, placeholders} from './placeholders';
+import {StillShot} from './StillShot';
 
 /**
  * Eine Zwischensequenz. Ist für den Slot ein Realfilm-Clip eingetragen, läuft dieser
@@ -34,6 +35,10 @@ export const CutsceneShot: React.FC<{slot: CutsceneSlot; duration: number; showL
         <AbsoluteFill style={{background: 'radial-gradient(ellipse 80% 80% at 50% 50%, transparent 55%, rgba(0,0,0,0.45) 100%)'}} />
       </AbsoluteFill>
     );
+  }
+
+  if (slot.stills && slot.stills.length > 0) {
+    return <StillShot parts={slot.stills} duration={duration} />;
   }
 
   const Placeholder = placeholders[slot.placeholder];

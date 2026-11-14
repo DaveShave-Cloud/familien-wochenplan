@@ -34,6 +34,8 @@ für Film 2 `COMP=Film2 bash scripts/stills.sh …`.
 | einen Nachrichtentext oder eine Uhrzeit in der Blase ändern | `src/films/film1/script.ts` bzw. `film2/script.ts` |
 | Zeitpunkte, Tippdauer, Schnitte, Blenden ändern | `src/films/…/timing.ts` |
 | einen Realfilm-Clip einsetzen | `src/films/…/cutscenes.ts` + `public/footage/` |
+| ein Standbild (z. B. im 3D-Trickfilmstil) einsetzen | `src/films/…/cutscenes.ts`: `stills: [{src: 'footage/S1-B-2.jpg'}]` |
+| Bildbeschreibungen für den Bildgenerator ändern | `scripts/make-prompts.ts` → `npm run prompts` |
 | Musik und Geräusche mischen | `src/films/…/sound.ts` |
 | Namen, Farben, Profilbilder, Gruppenname (beide Filme) | `src/world/nordwerk.ts` |
 | Aussehen der Chatoberfläche | `src/engine/chat/`, `src/engine/theme.ts` |
@@ -107,6 +109,18 @@ Lesbare Fassungen liegen in `docs/film1/` und `docs/film2/` (Drehbuch, Schnittpl
 - **Licht:** Die Schauplätze sind dieselben, werden aber im Lauf des Vormittags heller und wärmer.
 - **Sieben Filmszenen sind dieselben wie in Film 1** (gleiche Slots – ein Realfilm-Clip gilt für beide
   Filme), fünf gibt es nur hier (N1–N5).
+
+## Filmszenen im 3D-Trickfilmstil (in Arbeit)
+
+Gewünscht ist ein plastischer 3D-Trickfilmstil statt der Scherenschnitte. Der lässt sich nicht in Code
+zeichnen; er kommt als **Standbild aus einem Bildgenerator** und wird hier mit Kamerafahrt, Korn, Regen
+oder Staub im Licht und – wo nötig – darübergelegter Schrift zur Einstellung (`StillShot`).
+
+- Fertige Bildbeschreibungen für alle 20 Szenenbilder und 8 Profilbilder: `docs/BILDVORLAGEN.md`.
+- Zuerst die drei Testbilder (★) erzeugen und beurteilen, dann den Rest.
+- Einbau je Slot in `cutscenes.ts` über `stills` (mehrere Bilder nacheinander möglich, Kamerafahrt mit
+  `from`/`to`, Schrift mit `texts`). Reihenfolge der Quellen: Realfilm-Clip → Standbilder → Ersatzsequenz.
+- Profilbilder: Datei nach `public/avatars/`, in `src/world/nordwerk.ts` `avatar: {type: 'photo', src: …}`.
 
 ## Offene Punkte
 

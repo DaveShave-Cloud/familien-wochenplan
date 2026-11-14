@@ -14,7 +14,8 @@
     "render:film2": "bash scripts/render.sh film2",
     "render:film2:clean": "bash scripts/render.sh film2-clean",
     "render:test": "bash scripts/render.sh test",
-    "stills": "bash scripts/stills.sh"
+    "stills": "bash scripts/stills.sh",
+    "prompts": "tsx scripts/make-prompts.ts"
   },
   "dependencies": {
     "@fontsource-variable/inter": "^5.3.0",

@@ -133,7 +133,7 @@ const makeDocs = (def: FilmDef) => {
     // Motive, die es schon in Film 1 gibt, brauchen keinen zweiten Dreh
     const shared = def.id !== 'film1' && Object.values(films.film1.cutscenes).some((s) => s.placeholder === slot.placeholder);
     media.push(
-      `| ${shot.def.slot} | ${tc(shot.from)}–${tc(shot.to)} | ${sec(shot.duration)} | ${slot.title} | ${slot.brief}${shared ? ' **Derselbe Clip wie in Film 1.**' : ''} | ${slot.clip ? `Realfilm: \`${slot.clip.src}\`` : 'Ersatzsequenz'} |`,
+      `| ${shot.def.slot} | ${tc(shot.from)}–${tc(shot.to)} | ${sec(shot.duration)} | ${slot.title} | ${slot.brief}${shared ? ' **Derselbe Clip wie in Film 1.**' : ''} | ${slot.clip ? `Realfilm: \`${slot.clip.src}\`` : slot.stills?.length ? `Standbild: ${slot.stills.map((p) => `\`${p.src}\``).join(', ')}` : 'Ersatzsequenz'} |`,
     );
   }
   media.push(

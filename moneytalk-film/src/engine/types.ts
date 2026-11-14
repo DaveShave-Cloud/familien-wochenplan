@@ -160,6 +160,37 @@ export interface FilmTiming {
 
 // ───────────────────────── Medien (Zwischensequenzen) ─────────────────────────
 
+/** Ein Standbild mit Kamerafahrt (z. B. ein Bild im 3D-Trickfilmstil aus einem Bildgenerator). */
+export interface StillPart {
+  /** Bild relativ zu public/, z. B. "footage/S1-B-1.jpg". Mindestens 1920×1080, gern größer. */
+  src: string;
+  /** Anteil an der Länge des Slots, wenn mehrere Bilder aufeinander folgen (Standard: gleich lang). */
+  share?: number;
+  /**
+   * Kamerafahrt: [Zoom, x, y] am Anfang und am Ende. Zoom 1 = bildfüllend;
+   * x/y in Prozent = der Punkt im Bild, auf den die Kamera zufährt.
+   */
+  from?: [number, number, number];
+  to?: [number, number, number];
+  /** Leichte Bewegung über dem Bild. */
+  effect?: 'regen' | 'staub';
+  /**
+   * Schrift, die über das Bild gelegt wird und die Kamerafahrt mitmacht (z. B. das Etikett
+   * „NOTFALLORDNER“) – Bildgeneratoren entstellen Schrift häufig. x/y in Prozent, size in Pixeln.
+   */
+  texts?: {
+    text: string;
+    x: number;
+    y: number;
+    size: number;
+    color?: string;
+    weight?: number;
+    rotate?: number;
+    spacing?: number;
+    align?: 'left' | 'center';
+  }[];
+}
+
 export interface CutsceneSlot {
   id: string;
   /** Kurzname für Schnittplan und Kennzeichnung. */
@@ -168,6 +199,11 @@ export interface CutsceneSlot {
   brief: string;
   /** Schlüssel der Ersatzsequenz (engine/cutscenes/placeholders). */
   placeholder: string;
+  /**
+   * Standbilder mit Kamerafahrt. Ersetzen die gezeichnete Ersatzsequenz, sobald eingetragen;
+   * ein Realfilm-Clip (`clip`) hat Vorrang.
+   */
+  stills?: StillPart[];
   /**
    * Realfilm-Clip. Solange `null`, läuft die gekennzeichnete Ersatzsequenz.
    * Datei nach public/footage/ legen und hier eintragen.
